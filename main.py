@@ -16,7 +16,7 @@ search_query = "air force"
 brand = "Nike"
 
 browser.get('https://www.trendyol.com/sr?q=' + search_query)
-delay = 3
+delay = 5
  
 myElem = WebDriverWait(browser, delay).until(EC.presence_of_element_located(("xpath", "//*[@id='onetrust-accept-btn-handler']")))
 print("Cookies Accepted")
@@ -42,4 +42,17 @@ for i in trend_brand_filters_name_list:
         i.click()
         break
 
+sleep(5)
 
+trend_product_card = browser.find_element(By.XPATH, '//*[@id="search-app"]/div/div[1]/div[2]/div[5]/div[1]/div/div[3]').find_element(By.CLASS_NAME, 'p-card-chldrn-cntnr')
+
+trend_product_card_class = trend_product_card.find_element(By.CLASS_NAME, 'product-down')
+
+trend_product_desc = trend_product_card_class.get_property('children')[0].find_element(By.CLASS_NAME, 'prdct-desc-cntnr').find_element(By.CLASS_NAME, 'prdct-desc-cntnr-ttl-w').find_element(By.CLASS_NAME, 'prdct-desc-cntnr-name').text
+print(trend_product_desc)
+
+trend_rating_count = trend_product_card_class.find_element(By.CLASS_NAME, 'ratings-container').find_element(By.CLASS_NAME, 'ratings').find_element(By.CLASS_NAME, 'ratingCount').text
+print(trend_rating_count)
+
+trend_price = trend_product_card_class.find_element(By.CLASS_NAME, 'price-promotion-container').find_element(By.CLASS_NAME, 'prc-cntnr').find_element(By.CLASS_NAME, 'prc-box').text
+print(trend_price)
