@@ -25,7 +25,7 @@ print("Cookies Accepted")
 browser.find_element("xpath", "//*[@id='onetrust-accept-btn-handler']").click()
 
 # Click on the page once
-browser.find_element("xpath", '/html/body/div[1]/div[3]/div[2]/div[2]/div/div/div/div[1]/div[2]/div[4]/div[1]/div/div[4]/div[1]/a/div[2]').click() #
+browser.find_element("xpath", '//*[@id="search-app"]/div/div[1]/div[2]/div[4]/div[1]/div/div[3]/div[1]/a/div[2]').click() #
 
 # Find the brand filters
 trend_brand_filters = browser.find_element(By.CSS_SELECTOR, 'div[data-title="Marka"]')
@@ -44,7 +44,7 @@ for i in trend_brand_filters_name_list:
 
 sleep(5)
 
-trend_product_card = browser.find_element(By.XPATH, '//*[@id="search-app"]/div/div[1]/div[2]/div[5]/div[1]/div/div[3]').find_element(By.CLASS_NAME, 'p-card-chldrn-cntnr')
+trend_product_card = browser.find_element(By.XPATH, '//*[@id="search-app"]/div/div[1]/div[2]/div[5]/div[1]/div/div[2]').find_element(By.CLASS_NAME, 'p-card-chldrn-cntnr')
 
 trend_product_card_class = trend_product_card.find_element(By.CLASS_NAME, 'product-down')
 
@@ -54,5 +54,11 @@ print(trend_product_desc)
 trend_rating_count = trend_product_card_class.find_element(By.CLASS_NAME, 'ratings-container').find_element(By.CLASS_NAME, 'ratings').find_element(By.CLASS_NAME, 'ratingCount').text
 print(trend_rating_count)
 
-trend_price = trend_product_card_class.find_element(By.CLASS_NAME, 'price-promotion-container').find_element(By.CLASS_NAME, 'prc-cntnr').find_element(By.CLASS_NAME, 'prc-box').text
-print(trend_price)
+# If a product has a discounted price, the container name changes, so covering that case.
+try: 
+    trend_price = trend_product_card_class.find_element(By.CLASS_NAME, 'price-promotion-container').find_element(By.CLASS_NAME, 'prc-cntnr').find_element(By.CLASS_NAME, 'prc-box-dscntd').text
+    print(trend_price)
+except:
+    trend_price = trend_product_card_class.find_element(By.CLASS_NAME, 'price-promotion-container').find_element(By.CLASS_NAME, 'prmtn-cntnr').find_element(By.CLASS_NAME, 'prc-box-dscntd').text
+    print(trend_price)
+
