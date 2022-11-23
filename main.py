@@ -53,7 +53,7 @@ def trendyol(browser, brand, search_query):
                 i.click()
                 break
 
-    sleep(5)
+    browser.implicitly_wait(5)
 
     trend_products_div = browser.find_element(By.CLASS_NAME, 'prdct-cntnr-wrppr').get_property('children')
     desc_list = []
@@ -105,7 +105,7 @@ def amazon(browser, brand, search_query):
     # Click on the cookies button
     browser.find_element("xpath", '//*[@id="sp-cc-accept"]').click()
 
-    sleep(2)
+    browser.implicitly_wait(2)
 
     amazon_brand_filters = browser.find_element(By.ID, 'brandsRefinements').find_element(By.CLASS_NAME, 'a-unordered-list').get_property('children')
     
@@ -117,22 +117,30 @@ def amazon(browser, brand, search_query):
             i.find_element(By.CLASS_NAME, 'a-list-item').find_element(By.CLASS_NAME, 'a-link-normal').click()
             break
     
-    sleep(5)
-    amazon_result_list = browser.find_element(By.CSS_SELECTOR, '[data-component-type="s-search-results"]').find_element(By.CSS_SELECTOR, '[class="s-main-slot s-result-list s-search-results sg-row"]').get_property('children')
-    print("asdasd", len(amazon_result_list))
-    for i, item in enumerate(amazon_result_list):
-        if(i==2):
-            amazon_product_description = item.find_element(By.CSS_SELECTOR, '[class="sg-col-inner"]').find_element(By.CSS)
-            # product_description = item.find_element(By.CLASS_NAME,"sg-col-inner").find_element(By.CLASS_NAME,"s-widget-container").find_element(By.CLASS_NAME,"rush-component").find_element(By.CLASS_NAME,"rush-component").find_element(By.CLASS_NAME,"s-card-container").find_element(By.CLASS_NAME,"a-spacing-base").find_element(By.CLASS_NAME,"a-spacing-micro")
-            # ibine = product_description.find_element(By.CLASS_NAME,"s-title-instructions-style").find_element(By.CLASS_NAME,"a-color-base").find_element(By.CLASS_NAME,"a-link-normal").find_element(By.CLASS_NAME,"a-size-base-plus").text
-            # print(ibine)
-    sleep(2)
+    browser.implicitly_wait(5)
 
+
+    product_name = []
+    product_asin = []
+    product_price = []
+    product_ratings = []
+    product_ratings_num = []
+    product_link = []
+
+    items = WebDriverWait(browser,10).until(EC.presence_of_all_elements_located((By.XPATH, '//div[contains(@class, "s-result-item s-asin")]')))
+    for item in items:
+        name = item.find_element(By.XPATH, './/span[@class="a-size-base-plus a-color-base a-text-normal"]')
+        product_name.append(name.text)
+
+    print(product_name)
+    browser.implicitly_wait(2)
+
+    browser.quit()
 
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument('disable-notifications')
-
+#chrome_options.add_argument('--headless')
 browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
 browser.maximize_window()
 
