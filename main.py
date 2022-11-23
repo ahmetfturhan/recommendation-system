@@ -138,6 +138,7 @@ def amazon(browser, brand, search_query):
     product_ratings = []
     product_ratings_num = []
     product_link = []
+    product_merchant = []
 
     items = WebDriverWait(browser,10).until(EC.presence_of_all_elements_located((By.XPATH, '//div[contains(@class, "s-result-item s-asin")]')))
     for item in items:
@@ -167,6 +168,18 @@ def amazon(browser, brand, search_query):
             ratings_num = 0
         product_ratings.append(amazon_ratings)
         product_ratings_num.append(amazon_rating_num)
+
+        #get links
+        amazon_product_link = item.find_element(By.XPATH, './/a[@class="a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal"]').get_attribute('href')
+        product_link.append(amazon_product_link)
+
+    # for link in product_link:
+    #     browser.get(link)
+    #     browser.implicitly_wait(3)
+    #     merchant_info = browser.find_elements(By.XPATH, './/div[@id="merchant-info"]/span')
+    #     merchant_name = merchant_info[0].text
+    #     product_merchant.append(merchant_name)
+        
     
     product_string = brand.lower() + " " + search_query.lower()
     amazon_matched_products = []
@@ -178,6 +191,8 @@ def amazon(browser, brand, search_query):
     # print(product_price)
     # print(product_ratings)
     # print(product_ratings_num)
+    # print(product_link)
+    # print(product_merchant)
     browser.implicitly_wait(2)
 
     browser.quit()
@@ -194,7 +209,6 @@ brand = "apple"
 
 trendyol_items = trendyol(browser, brand, search_query)
 amazon_items = amazon(browser, brand, search_query)
-
 print("Trendyol items\n", trendyol_items)
 print("Amazon items\n\n\n", amazon_items)
 
@@ -227,7 +241,7 @@ for t in trendyol_items:
                         match_counter += 1
                         break
 
-            if match_counter == len(amazon_split):
+            if match_counter >= int(len(amazon_split)*0.90):
                 print("Matched", t, a)
                 matched_products.append([a, t])
 
@@ -239,7 +253,7 @@ for t in trendyol_items:
                         match_counter += 1
                         break
 
-            if match_counter == len(trendyol_split):
+            if match_counter >= int(len(trendyol_split)*0.90):
                 print("Matched", t, a)
                 matched_products.append([a, t])
 
