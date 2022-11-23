@@ -56,7 +56,7 @@ def trendyol(browser, brand, search_query):
     sleep(5)
 
     trend_products_div = browser.find_element(By.CLASS_NAME, 'prdct-cntnr-wrppr').get_property('children')
-
+    desc_list = []
     for i in trend_products_div:
         try:
             trend_product_card = i.find_element(By.CLASS_NAME, 'p-card-chldrn-cntnr')
@@ -64,6 +64,8 @@ def trendyol(browser, brand, search_query):
             trend_product_card_class = trend_product_card.find_element(By.CLASS_NAME, 'product-down')
 
             trend_product_desc = trend_product_card_class.get_property('children')[0].find_element(By.CLASS_NAME, 'prdct-desc-cntnr').find_element(By.CLASS_NAME, 'prdct-desc-cntnr-ttl-w').find_element(By.CLASS_NAME, 'prdct-desc-cntnr-name').text
+            desc_list.append(trend_product_desc.split(" "))
+            #print(desc_list)
             print(trend_product_desc)
         except Exception as e:
             continue
@@ -93,6 +95,40 @@ def trendyol(browser, brand, search_query):
         except Exception as e:
             print("Cannot find price", e)
 
+def amazon(browser, brand, search_query):
+    browser.get('https://www.amazon.com.tr/s?k=' + search_query)
+    delay = 5
+
+    myElem = WebDriverWait(browser, delay).until(EC.presence_of_element_located(("xpath", '//*[@id="sp-cc-accept"]')))
+    print("Cookies Accepted")
+
+    # Click on the cookies button
+    browser.find_element("xpath", '//*[@id="sp-cc-accept"]').click()
+
+    sleep(2)
+
+    amazon_brand_filters = browser.find_element(By.ID, 'brandsRefinements').find_element(By.CLASS_NAME, 'a-unordered-list').get_property('children')
+    
+    #Select the brand
+    for i in amazon_brand_filters:
+        brand_name = i.find_element(By.CLASS_NAME, 'a-list-item').find_element(By.CLASS_NAME, 'a-link-normal').find_element(By.CLASS_NAME, 'a-size-base').text
+        print("brands", brand_name)
+        if i.text.lower() == brand.lower():
+            i.find_element(By.CLASS_NAME, 'a-list-item').find_element(By.CLASS_NAME, 'a-link-normal').click()
+            break
+    
+    sleep(5)
+    amazon_result_list = browser.find_element(By.CSS_SELECTOR, '[data-component-type="s-search-results"]').find_element(By.CSS_SELECTOR, '[class="s-main-slot s-result-list s-search-results sg-row"]').get_property('children')
+    print("asdasd", len(amazon_result_list))
+    for i, item in enumerate(amazon_result_list):
+        if(i==2):
+            amazon_product_description = item.find_element(By.CSS_SELECTOR, '[class="sg-col-inner"]').find_element(By.CSS)
+            # product_description = item.find_element(By.CLASS_NAME,"sg-col-inner").find_element(By.CLASS_NAME,"s-widget-container").find_element(By.CLASS_NAME,"rush-component").find_element(By.CLASS_NAME,"rush-component").find_element(By.CLASS_NAME,"s-card-container").find_element(By.CLASS_NAME,"a-spacing-base").find_element(By.CLASS_NAME,"a-spacing-micro")
+            # ibine = product_description.find_element(By.CLASS_NAME,"s-title-instructions-style").find_element(By.CLASS_NAME,"a-color-base").find_element(By.CLASS_NAME,"a-link-normal").find_element(By.CLASS_NAME,"a-size-base-plus").text
+            # print(ibine)
+    sleep(2)
+
+
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument('disable-notifications')
@@ -101,6 +137,8 @@ browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
 browser.maximize_window()
 
 search_query = "iphone 11"
-brand = "Apple"
+brand = "apple"
 
-trendyol(browser, brand, search_query)
+#trendyol(browser, brand, search_query)
+amazon(browser, brand, search_query)
+
