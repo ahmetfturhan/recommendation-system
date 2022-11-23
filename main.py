@@ -20,7 +20,13 @@ def check_exists_by_css(css_selector, browser):
     except NoSuchElementException:
         return False
     return True
-
+    
+def remove_items(test_list, item):
+ 
+    # using list comprehension to perform the task
+    res = [i for i in test_list if i != item]
+ 
+    return res
 
 def trendyol(browser, brand, search_query):
     browser.get('https://www.trendyol.com/sr?q=' + search_query)
@@ -64,9 +70,9 @@ def trendyol(browser, brand, search_query):
             trend_product_card_class = trend_product_card.find_element(By.CLASS_NAME, 'product-down')
 
             trend_product_desc = trend_product_card_class.get_property('children')[0].find_element(By.CLASS_NAME, 'prdct-desc-cntnr').find_element(By.CLASS_NAME, 'prdct-desc-cntnr-ttl-w').find_element(By.CLASS_NAME, 'prdct-desc-cntnr-name').text
-            desc_list.append(trend_product_desc.split(" "))
+            desc_list.append(trend_product_desc)
             #print(desc_list)
-            print(trend_product_desc)
+            # print((trend_product_desc))
         except Exception as e:
             continue
 
@@ -75,7 +81,7 @@ def trendyol(browser, brand, search_query):
             trend_rating_count_container = trend_product_card_class.find_element(By.CLASS_NAME, 'ratings-container')
             trend_ratings = trend_rating_count_container.find_element(By.CLASS_NAME, 'ratings')
             trend_rating_count = trend_ratings.find_element(By.CLASS_NAME, 'ratingCount').text
-            print(trend_rating_count)
+            # print(trend_rating_count)
         except Exception as e:
             print("Cannot find rating", e)
 
@@ -85,15 +91,21 @@ def trendyol(browser, brand, search_query):
                 try: 
                     #Düz fiyat ve çizgili fiyat caseleri
                     trend_price = trend_product_card_class.find_element(By.CLASS_NAME, 'price-promotion-container').find_element(By.CLASS_NAME, 'prc-cntnr').find_element(By.CLASS_NAME, 'prc-box-dscntd').text 
-                    print(trend_price)
+                    # print(trend_price)
 
                 except Exception as e:
                     #Sepet fiyatı case
                     trend_price = trend_product_card_class.find_element(By.CLASS_NAME, 'price-promotion-container').find_element(By.CLASS_NAME, 'prmtn-cntnr').get_property('children')[0].find_element(By.CLASS_NAME, 'prmtn').find_element(By.CLASS_NAME, 'prc-box-dscntd').text
-                    print(trend_price)
+                    # print(trend_price)
             
         except Exception as e:
             print("Cannot find price", e)
+    print(desc_list)
+    trendyol_matched_products = []
+    for item in desc_list:
+        if search_query.lower() in item.lower() and "kulaklık" not in item.lower() and "kılıf" not in item.lower():
+            trendyol_matched_products.append(item)
+    return trendyol_matched_products
 
 def amazon(browser, brand, search_query):
     browser.get('https://www.amazon.com.tr/s?k=' + search_query)
@@ -117,10 +129,10 @@ def amazon(browser, brand, search_query):
             i.find_element(By.CLASS_NAME, 'a-list-item').find_element(By.CLASS_NAME, 'a-link-normal').click()
             break
     
-    browser.implicitly_wait(5)
+    browser.implicitly_wait(3)
 
 
-    product_name = []
+    product_desc = []
     product_asin = []
     product_price = []
     product_ratings = []
@@ -129,24 +141,109 @@ def amazon(browser, brand, search_query):
 
     items = WebDriverWait(browser,10).until(EC.presence_of_all_elements_located((By.XPATH, '//div[contains(@class, "s-result-item s-asin")]')))
     for item in items:
-        name = item.find_element(By.XPATH, './/span[@class="a-size-base-plus a-color-base a-text-normal"]')
-        product_name.append(name.text)
+        
+        #Get descriptions
+        amazon_product_desc = item.find_element(By.XPATH, './/span[@class="a-size-base-plus a-color-base a-text-normal"]')
+        product_desc.append(amazon_product_desc.text)
 
-    print(product_name)
+        # Find price
+        amazon_whole_price = item.find_elements(By.XPATH, './/span[@class="a-price-whole"]')
+        amazon_fraction_price = item.find_elements(By.XPATH,'.//span[@class="a-price-fraction"]')
+
+        if amazon_whole_price != [] and amazon_fraction_price != []:
+            price = '.'.join([amazon_whole_price[0].text, amazon_fraction_price[0].text])
+        else:
+            price = 0
+        product_price.append(price)
+
+        #get rratings
+        amazon_rating_box = item.find_elements(By.XPATH, './/div[@class="a-row a-size-small"]/span')
+
+        if amazon_rating_box != []:
+            amazon_ratings = amazon_rating_box[0].get_attribute('aria-label')
+            amazon_rating_num = amazon_rating_box[1].get_attribute('aria-label')
+        else:
+            ratings = 0
+            ratings_num = 0
+        product_ratings.append(amazon_ratings)
+        product_ratings_num.append(amazon_rating_num)
+    
+    product_string = brand.lower() + " " + search_query.lower()
+    amazon_matched_products = []
+    for desc in product_desc:
+        if product_string in desc.lower() and "kılıf" not in desc.lower():
+            amazon_matched_products.append(desc)
+
+    
+    # print(product_price)
+    # print(product_ratings)
+    # print(product_ratings_num)
     browser.implicitly_wait(2)
 
     browser.quit()
-
+    return amazon_matched_products
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument('disable-notifications')
-#chrome_options.add_argument('--headless')
+chrome_options.add_argument('--headless')
 browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
 browser.maximize_window()
 
 search_query = "iphone 11"
 brand = "apple"
 
-#trendyol(browser, brand, search_query)
-amazon(browser, brand, search_query)
+trendyol_items = trendyol(browser, brand, search_query)
+amazon_items = amazon(browser, brand, search_query)
+
+print("Trendyol items\n", trendyol_items)
+print("Amazon items\n\n\n", amazon_items)
+
+matched_products = []
+for t in trendyol_items:
+    for a in amazon_items:
+        t = t.lower()
+        a = a.lower()
+        t = t.replace('(', '')
+        t = t.replace(')', '')
+        t = t.replace('-', '')
+
+        a = a.replace('(', '')
+        a = a.replace(')', '')
+        a = a.replace('-', '')
+
+        trendyol_split = t.split(" ")
+        amazon_split = a.split(" ")
+
+        trendyol_split = remove_items(trendyol_split, "")
+        amazon_split = remove_items(amazon_split, "")
+
+        print("\nAmazon split, ", amazon_split)
+        print("\nTrendyol split, ", trendyol_split)
+        match_counter = 0
+        if len(trendyol_split) > len(amazon_split):
+            for i in amazon_split:
+                for j in trendyol_split:
+                    if i == j:
+                        match_counter += 1
+                        break
+
+            if match_counter == len(amazon_split):
+                print("Matched", t, a)
+                matched_products.append([a, t])
+
+        else:
+            match_counter = 0
+            for i in trendyol_split:
+                for j in amazon_split:
+                    if i == j:
+                        match_counter += 1
+                        break
+
+            if match_counter == len(trendyol_split):
+                print("Matched", t, a)
+                matched_products.append([a, t])
+
+print(matched_products)
+
+
 
