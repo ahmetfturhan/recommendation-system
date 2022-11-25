@@ -6,6 +6,31 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException 
+from selenium.common.exceptions import StaleElementReferenceException
+
+class Product:
+    def __init__(self, name, price, link, image, rating, merchant):
+        self.name = name
+        self.price = price
+        self.link = link
+        self.image = image
+        self.rating = rating
+        self.merchant = merchant
+
+
+class Merchant:
+    def __init__(self, name, rating):
+        self.name = name
+        self.rating = rating
+def print_product(product):
+    print("Name: " + product.name)
+    print("Price: " + product.price)
+    print("Link: " + product.link)
+    print("Image: " + product.image)
+    print("Rating: " + product.rating)
+    print("Merchant: " + product.merchant.name)
+    print("Merchant Rating: " + product.merchant.rating)
+    print("")
 
 def check_exists_by_class(class_name, browser):
     try:
@@ -60,52 +85,105 @@ def trendyol(browser, brand, search_query):
                 break
 
     browser.implicitly_wait(5)
+    sleep(5)
+    trend_products_div = WebDriverWait(browser,10).until(EC.presence_of_all_elements_located((By.XPATH, '//div[contains(@class, "p-card-wrppr")]')))
 
-    trend_products_div = browser.find_element(By.CLASS_NAME, 'prdct-cntnr-wrppr').get_property('children')
-    desc_list = []
-    for i in trend_products_div:
+    print("Total found products: ", len(trend_products_div))
+ 
+    trend_link_list = []
+    trend_product_list = []
+
+    for i, item in enumerate(trend_products_div):
+
+        print("Loading",(i / len(trend_products_div))*100,"%")
+
+        # get product descriptions
         try:
-            trend_product_card = i.find_element(By.CLASS_NAME, 'p-card-chldrn-cntnr')
+            trend_product_desc = item.find_element(By.XPATH, './/span[contains(@class, "prdct-desc-cntnr-name")]').text
+            print(trend_product_desc)
 
-            trend_product_card_class = trend_product_card.find_element(By.CLASS_NAME, 'product-down')
-
-            trend_product_desc = trend_product_card_class.get_property('children')[0].find_element(By.CLASS_NAME, 'prdct-desc-cntnr').find_element(By.CLASS_NAME, 'prdct-desc-cntnr-ttl-w').find_element(By.CLASS_NAME, 'prdct-desc-cntnr-name').text
-            desc_list.append(trend_product_desc)
-            #print(desc_list)
-            # print((trend_product_desc))
-        except Exception as e:
-            continue
-
-        #Some products don't have ratings
+        except StaleElementReferenceException as e:
+            trend_product_desc = "0"
+            print("StaleElementReferenceException")
+        
+        # get ratings
         try:
-            trend_rating_count_container = trend_product_card_class.find_element(By.CLASS_NAME, 'ratings-container')
-            trend_ratings = trend_rating_count_container.find_element(By.CLASS_NAME, 'ratings')
-            trend_rating_count = trend_ratings.find_element(By.CLASS_NAME, 'ratingCount').text
-            # print(trend_rating_count)
+            trend_product_rating_count = item.find_element(By.XPATH, './/span[contains(@class, "ratingCount")]').text
+            trend_product_rating_count = trend_product_rating_count.replace("(", "")
+            trend_product_rating_count = trend_product_rating_count.replace(")", "")
+    
         except Exception as e:
-            print("Cannot find rating", e)
-
+            print("Couldn't get rating", e)
+            trend_product_rating_count = "0"            
+        
+        # get prices
         try:
-            # If a product has a discounted price, the container name changes, so covering that case.
-            if check_exists_by_class('price-promotion-container', browser):
-                try: 
-                    #Düz fiyat ve çizgili fiyat caseleri
-                    trend_price = trend_product_card_class.find_element(By.CLASS_NAME, 'price-promotion-container').find_element(By.CLASS_NAME, 'prc-cntnr').find_element(By.CLASS_NAME, 'prc-box-dscntd').text 
-                    # print(trend_price)
-
-                except Exception as e:
-                    #Sepet fiyatı case
-                    trend_price = trend_product_card_class.find_element(By.CLASS_NAME, 'price-promotion-container').find_element(By.CLASS_NAME, 'prmtn-cntnr').get_property('children')[0].find_element(By.CLASS_NAME, 'prmtn').find_element(By.CLASS_NAME, 'prc-box-dscntd').text
-                    # print(trend_price)
-            
+            trend_product_price_box = item.find_element(By.XPATH, './/div[contains(@class, "price-promotion-container")]')
+            trend_product_price = trend_product_price_box.find_element(By.XPATH, './/div[contains(@class, "prc-box-dscntd")]').text
         except Exception as e:
-            print("Cannot find price", e)
-    print(desc_list)
-    trendyol_matched_products = []
-    for item in desc_list:
-        if search_query.lower() in item.lower() and "kulaklık" not in item.lower() and "kılıf" not in item.lower():
-            trendyol_matched_products.append(item)
-    return trendyol_matched_products
+            trend_product_price = "0"
+            print("Couldn't get price", e)
+
+        # get links
+        try:
+            trend_product_link = item.find_element(By.XPATH, './/div[contains(@class, "p-card-chldrn-cntnr")]/a').get_property('href')
+            trend_link_list.append(trend_product_link)
+        except Exception as e:
+            trend_product_link = "0"
+            trend_link_list.append(trend_product_link)
+            print("Couldn't get link", e)
+        
+                #create a product object
+        new_product = Product(trend_product_desc, trend_product_price, trend_product_link, "0", trend_product_rating_count, Merchant("null", "null"))
+        trend_product_list.append(new_product)
+
+    # product pages        
+    for j, link in enumerate(trend_link_list):
+
+        browser.get(link)
+
+        #wait for max 10 seconds to load the page
+        WebDriverWait(browser, 10).until(
+        EC.presence_of_element_located((By.CLASS_NAME, "product-seller-line"))
+    )
+        # get images
+        try:
+            #get img link
+            trend_product_img = browser.find_element(By.XPATH, '//div[contains(@class, "base-product-image")]/div/img').get_property('src')
+            print(trend_product_img)
+        except Exception as e:
+            trend_product_img = "09"
+            print("Couldn't get img", e)
+        
+        #get merchant
+        try:
+            trend_product_merchant_name = browser.find_element(By.XPATH, '//div[contains(@class, "seller-container")]/a').text
+            trend_product_merchant_rating_box = browser.find_element(By.XPATH, '//div[contains(@class, "product-seller-line")]')
+        except Exception as e:
+            trend_product_merchant_name = "0"
+            print("Couldn't get merchant name", e)
+
+        try:    
+            trend_product_merchant_rating = trend_product_merchant_rating_box.find_element(By.XPATH, './/div[contains(@class, "sl-pn")]').text
+        except Exception as e:
+            trend_product_merchant_rating = "0"
+            print("Couldn't get merchant", e)
+
+        #create a merchant object
+        new_merchant = Merchant(trend_product_merchant_name, trend_product_merchant_rating)
+        trend_product_list[j].merchant = new_merchant
+        trend_product_list[j].img = trend_product_img
+
+
+    for i in trend_product_list:
+        print_product(i)
+        
+
+    # trendyol_matched_products = []
+    # for item in desc_list:
+    #     if search_query.lower() in item.lower() and "kulaklık" not in item.lower() and "kılıf" not in item.lower():
+    #         trendyol_matched_products.append(item)
+    # return trendyol_matched_products
 
 def amazon(browser, brand, search_query):
     browser.get('https://www.amazon.com.tr/s?k=' + search_query)
@@ -139,7 +217,6 @@ def amazon(browser, brand, search_query):
     product_ratings_num = []
     product_link = []
     product_merchant = []
-
     items = WebDriverWait(browser,10).until(EC.presence_of_all_elements_located((By.XPATH, '//div[contains(@class, "s-result-item s-asin")]')))
     for item in items:
         
@@ -203,15 +280,15 @@ chrome_options.add_argument('disable-notifications')
 chrome_options.add_argument('--headless')
 browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
 browser.maximize_window()
-
 search_query = "iphone 11"
 brand = "apple"
 
 trendyol_items = trendyol(browser, brand, search_query)
-amazon_items = amazon(browser, brand, search_query)
+# amazon_items = amazon(browser, brand, search_query)
 print("Trendyol items\n", trendyol_items)
-print("Amazon items\n\n\n", amazon_items)
-
+# print("Amazon items\n\n\n", amazon_items)
+browser.quit()
+exit(0)
 matched_products = []
 for t in trendyol_items:
     for a in amazon_items:
