@@ -9,12 +9,13 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import StaleElementReferenceException
 
 class Product:
-    def __init__(self, name, price, link, image, rating, merchant):
+    def __init__(self, name, price, link, image, rating, rating_count, merchant):
         self.name = name
         self.price = price
         self.link = link
         self.image = image
         self.rating = rating
+        self.rating_count = rating_count
         self.merchant = merchant
 
 
@@ -22,14 +23,17 @@ class Merchant:
     def __init__(self, name, rating):
         self.name = name
         self.rating = rating
+
+
 def print_product(product):
-    print("Name: " + product.name)
-    print("Price: " + product.price)
-    print("Link: " + product.link)
-    print("Image: " + product.image)
-    print("Rating: " + product.rating)
-    print("Merchant: " + product.merchant.name)
-    print("Merchant Rating: " + product.merchant.rating)
+    print("Name:", product.name)
+    print("Price:", product.price)
+    print("Link:", product.link)
+    print("Image:", product.image)
+    print("Rating:", product.rating)
+    print("Rating Count:", product.rating_count)
+    print("Merchant:", product.merchant.name)
+    print("Merchant Rating:", product.merchant.rating)
     print("")
 
 def check_exists_by_class(class_name, browser):
@@ -94,13 +98,14 @@ def trendyol(browser, brand, search_query):
     trend_product_list = []
 
     for i, item in enumerate(trend_products_div):
-
+        if i == 3:
+            break
         print("Loading",(i / len(trend_products_div))*100,"%")
 
         # get product descriptions
         try:
             trend_product_desc = item.find_element(By.XPATH, './/span[contains(@class, "prdct-desc-cntnr-name")]').text
-            print(trend_product_desc)
+            # print(trend_product_desc)
 
         except StaleElementReferenceException as e:
             trend_product_desc = "0"
@@ -134,11 +139,13 @@ def trendyol(browser, brand, search_query):
             print("Couldn't get link", e)
         
                 #create a product object
-        new_product = Product(trend_product_desc, trend_product_price, trend_product_link, "0", trend_product_rating_count, Merchant("null", "null"))
+        new_product = Product(trend_product_desc, trend_product_price, trend_product_link, "0", 0 ,trend_product_rating_count, Merchant("null", "null"))
         trend_product_list.append(new_product)
 
     # product pages        
     for j, link in enumerate(trend_link_list):
+        if j == 3:
+            break
         browser.get(link)
 
         #wait for max 10 seconds to load the page
@@ -173,7 +180,7 @@ def trendyol(browser, brand, search_query):
         trend_product_list[j].merchant = new_merchant
         trend_product_list[j].image = trend_product_img
 
-
+    print("Trendyol Products:\n")
     for i in trend_product_list:
         print_product(i)
         
@@ -216,9 +223,12 @@ def amazon(browser, brand, search_query):
     product_ratings_num = []
     product_link = []
     product_merchant = []
+
+    amazon_product_list = []
     items = WebDriverWait(browser,10).until(EC.presence_of_all_elements_located((By.XPATH, '//div[contains(@class, "s-result-item s-asin")]')))
-    for item in items:
-        
+    for j, item in enumerate(items):
+        if j == 3:
+            break
         #Get descriptions
         amazon_product_desc = item.find_element(By.XPATH, './/span[@class="a-size-base-plus a-color-base a-text-normal"]')
         product_desc.append(amazon_product_desc.text)
@@ -249,42 +259,65 @@ def amazon(browser, brand, search_query):
         amazon_product_link = item.find_element(By.XPATH, './/a[@class="a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal"]').get_attribute('href')
         product_link.append(amazon_product_link)
 
-    # for link in product_link:
-    #     browser.get(link)
-    #     browser.implicitly_wait(3)
-    #     merchant_info = browser.find_elements(By.XPATH, './/div[@id="merchant-info"]/span')
-    #     merchant_name = merchant_info[0].text
-    #     product_merchant.append(merchant_name)
-        
-    
-    product_string = brand.lower() + " " + search_query.lower()
-    amazon_matched_products = []
-    for desc in product_desc:
-        if product_string in desc.lower() and "kılıf" not in desc.lower():
-            amazon_matched_products.append(desc)
+        new_product = Product(amazon_product_desc.text, price, amazon_product_link, "09", amazon_ratings, amazon_rating_num, "000")
+        amazon_product_list.append(new_product)
 
-    
-    # print(product_price)
-    # print(product_ratings)
-    # print(product_ratings_num)
-    # print(product_link)
-    # print(product_merchant)
-    browser.implicitly_wait(2)
+    for i, link in enumerate(product_link):
+        if i == 3:
+            break
+        browser.get(link)
+        # browser.implicitly_wait(3)
+        WebDriverWait(browser,10).until(EC.presence_of_all_elements_located((By.XPATH, '//img[@id="landingImage"]')))
+
+        #Get merchant info
+        try:
+            merchant_info = browser.find_elements(By.XPATH, './/div[@id="merchant-info"]/a')
+
+            if len(merchant_info) != 0:
+                merchant_name = merchant_info[0].text
+                product_merchant.append(merchant_name)
+            else:
+                merchant_name = "Amazon.com.trr"   
+
+        except:
+            merchant_name = "Amazon.com.tr"   
+        
+        #Get image
+        try:
+            amazon_image = browser.find_element(By.XPATH, '//img[@id="landingImage"]')
+            amazon_image_src = amazon_image.get_attribute('src')
+        except:
+            amazon_image_src = "0"
+        
+        new_merchant = Merchant(merchant_name, 0)
+        amazon_product_list[i].merchant = new_merchant
+        amazon_product_list[i].image = amazon_image_src
+
+    product_string = brand.lower() + " " + search_query.lower()
+
+    # amazon_matched_products = []
+    # for desc in product_desc:
+    #     if product_string in desc.lower() and "kılıf" not in desc.lower():
+    #         amazon_matched_products.append(desc)
+
+    print("Amazon Products:\n")
+    for i in amazon_product_list:
+        print_product(i)
 
     browser.quit()
-    return amazon_matched_products
+    # return amazon_matched_products
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument('disable-notifications')
-chrome_options.add_argument('--headless')
+# chrome_options.add_argument('--headless')
 browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
 browser.maximize_window()
 search_query = "iphone 11"
 brand = "apple"
 
 trendyol_items = trendyol(browser, brand, search_query)
-# amazon_items = amazon(browser, brand, search_query)
-print("Trendyol items\n", trendyol_items)
+amazon_items = amazon(browser, brand, search_query)
+# print("Trendyol items\n", trendyol_items)
 # print("Amazon items\n\n\n", amazon_items)
 browser.quit()
 exit(0)
