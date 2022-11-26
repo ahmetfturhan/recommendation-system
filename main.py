@@ -139,7 +139,6 @@ def trendyol(browser, brand, search_query):
 
     # product pages        
     for j, link in enumerate(trend_link_list):
-
         browser.get(link)
 
         #wait for max 10 seconds to load the page
@@ -172,7 +171,7 @@ def trendyol(browser, brand, search_query):
         #create a merchant object
         new_merchant = Merchant(trend_product_merchant_name, trend_product_merchant_rating)
         trend_product_list[j].merchant = new_merchant
-        trend_product_list[j].img = trend_product_img
+        trend_product_list[j].image = trend_product_img
 
 
     for i in trend_product_list:
