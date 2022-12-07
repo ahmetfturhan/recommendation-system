@@ -8,7 +8,6 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException 
 from selenium.common.exceptions import StaleElementReferenceException
-from faker import Faker
 from selenium.webdriver.chrome.service import Service
 import time
 
