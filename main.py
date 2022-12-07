@@ -98,7 +98,7 @@ def trendyol(browser, brand, search_query):
     trend_product_list = []
 
     for i, item in enumerate(trend_products_div):
-        if i == 3:
+        if i == 6:
             break
         print("Loading",(i / len(trend_products_div))*100,"%")
 
@@ -144,7 +144,7 @@ def trendyol(browser, brand, search_query):
 
     # product pages        
     for j, link in enumerate(trend_link_list):
-        if j == 3:
+        if j == 6:
             break
         browser.get(link)
 
@@ -156,7 +156,6 @@ def trendyol(browser, brand, search_query):
         try:
             #get img link
             trend_product_img = browser.find_element(By.XPATH, '//div[contains(@class, "base-product-image")]/div/img').get_property('src')
-            print(trend_product_img)
         except Exception as e:
             trend_product_img = "09"
             print("Couldn't get img", e)
@@ -185,11 +184,11 @@ def trendyol(browser, brand, search_query):
         print_product(i)
         
 
-    # trendyol_matched_products = []
-    # for item in desc_list:
-    #     if search_query.lower() in item.lower() and "kulaklık" not in item.lower() and "kılıf" not in item.lower():
-    #         trendyol_matched_products.append(item)
-    # return trendyol_matched_products
+    trendyol_matched_products = []
+    for item in trend_product_list:
+        if search_query.lower() in item.name.lower() and "kulaklık" not in item.name.lower() and "kılıf" not in item.name.lower():
+            trendyol_matched_products.append(item)
+    return trendyol_matched_products
 
 def amazon(browser, brand, search_query):
     browser.get('https://www.amazon.com.tr/s?k=' + search_query)
@@ -227,7 +226,7 @@ def amazon(browser, brand, search_query):
     amazon_product_list = []
     items = WebDriverWait(browser,10).until(EC.presence_of_all_elements_located((By.XPATH, '//div[contains(@class, "s-result-item s-asin")]')))
     for j, item in enumerate(items):
-        if j == 3:
+        if j == 6:
             break
         #Get descriptions
         amazon_product_desc = item.find_element(By.XPATH, './/span[@class="a-size-base-plus a-color-base a-text-normal"]')
@@ -263,7 +262,7 @@ def amazon(browser, brand, search_query):
         amazon_product_list.append(new_product)
 
     for i, link in enumerate(product_link):
-        if i == 3:
+        if i == 6:
             break
         browser.get(link)
         # browser.implicitly_wait(3)
@@ -277,7 +276,7 @@ def amazon(browser, brand, search_query):
                 merchant_name = merchant_info[0].text
                 product_merchant.append(merchant_name)
             else:
-                merchant_name = "Amazon.com.trr"   
+                merchant_name = "Amazon.com.tr"   
 
         except:
             merchant_name = "Amazon.com.tr"   
@@ -295,53 +294,61 @@ def amazon(browser, brand, search_query):
 
     product_string = brand.lower() + " " + search_query.lower()
 
-    # amazon_matched_products = []
-    # for desc in product_desc:
-    #     if product_string in desc.lower() and "kılıf" not in desc.lower():
-    #         amazon_matched_products.append(desc)
+    amazon_matched_products = []
+    for i in amazon_product_list:
+        if product_string in i.name.lower() and "kılıf" not in i.name.lower():
+            amazon_matched_products.append(i)
 
     print("Amazon Products:\n")
     for i in amazon_product_list:
         print_product(i)
 
     browser.quit()
-    # return amazon_matched_products
+    return amazon_matched_products
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument('disable-notifications')
 # chrome_options.add_argument('--headless')
 browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
 browser.maximize_window()
+
 search_query = "iphone 11"
 brand = "apple"
-
+# search_query = search_query.replace(" ", "+")
 trendyol_items = trendyol(browser, brand, search_query)
 amazon_items = amazon(browser, brand, search_query)
-# print("Trendyol items\n", trendyol_items)
-# print("Amazon items\n\n\n", amazon_items)
+
+print("Trendyol filtered items\n")
+for i in trendyol_items:
+    print_product(i)
+
+print("Amazon filtered items\n")
+for i in amazon_items:
+    print_product(i)
+
 browser.quit()
-exit(0)
+# exit(0)
 matched_products = []
 for t in trendyol_items:
     for a in amazon_items:
-        t = t.lower()
-        a = a.lower()
-        t = t.replace('(', '')
-        t = t.replace(')', '')
-        t = t.replace('-', '')
+        tr = t.name.lower()
+        am = a.name.lower()
+        tr = tr.replace('(', '')
+        tr = tr.replace(')', '')
+        tr = tr.replace('-', '')
 
-        a = a.replace('(', '')
-        a = a.replace(')', '')
-        a = a.replace('-', '')
+        am = am.replace('(', '')
+        am = am.replace(')', '')
+        am = am.replace('-', '')
 
-        trendyol_split = t.split(" ")
-        amazon_split = a.split(" ")
+        trendyol_split = tr.split(" ")
+        amazon_split = am.split(" ")
 
         trendyol_split = remove_items(trendyol_split, "")
         amazon_split = remove_items(amazon_split, "")
 
-        print("\nAmazon split, ", amazon_split)
-        print("\nTrendyol split, ", trendyol_split)
+        # print("\nAmazon split, ", amazon_split)
+        # print("\nTrendyol split, ", trendyol_split)
         match_counter = 0
         if len(trendyol_split) > len(amazon_split):
             for i in amazon_split:
@@ -350,8 +357,9 @@ for t in trendyol_items:
                         match_counter += 1
                         break
 
-            if match_counter >= int(len(amazon_split)*0.90):
-                print("Matched", t, a)
+            # if match_counter >= int(len(amazon_split)*0.90): #most similar
+            if match_counter == len(amazon_split): #similar
+                # print("Matched", tr, am)
                 matched_products.append([a, t])
 
         else:
@@ -362,11 +370,15 @@ for t in trendyol_items:
                         match_counter += 1
                         break
 
-            if match_counter >= int(len(trendyol_split)*0.90):
-                print("Matched", t, a)
+            # if match_counter >= int(len(trendyol_split)*0.90): # most similar
+            if match_counter == (len(trendyol_split)):
+                # print("Matched", tr, am)
                 matched_products.append([a, t])
 
-print(matched_products)
+print("\nMatched products, with exact match:\n")
+for i in matched_products:
+    print("\n\nMatched:\nAmazon Product: ", i[0].name)
+    print("\nTrendyol Product: ", i[1].name)
 
 
 
