@@ -62,11 +62,18 @@ def remove_items(test_list, item):
     return res
 
 def trendyol(brand, search_query):
+<<<<<<< HEAD
     print("Starting Trendyol")
     start = time.time()
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('disable-notifications')
     chrome_options.add_argument('--headless')
+=======
+    
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('disable-notifications')
+    # chrome_options.add_argument('--headless')
+>>>>>>> 6f66049 (multiprocessing)
     browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
     browser.maximize_window()
     
@@ -196,9 +203,13 @@ def trendyol(brand, search_query):
         print_product(i)
     
     browser.quit()    
+<<<<<<< HEAD
     end = time.time()
     print("The time of execution of Trendyol script is :",
       (end-start) * 10**3, "ms")
+=======
+    exit(0)
+>>>>>>> 6f66049 (multiprocessing)
     # trendyol_matched_products = []
     # for item in desc_list:
     #     if search_query.lower() in item.lower() and "kulaklık" not in item.lower() and "kılıf" not in item.lower():
@@ -206,6 +217,7 @@ def trendyol(brand, search_query):
     # return trendyol_matched_products
 
 def amazon(brand, search_query):
+<<<<<<< HEAD
     print("Starting Amazon")
     start = time.time()
     # random user agent generator
@@ -232,6 +244,15 @@ def amazon(brand, search_query):
 
 
 
+=======
+    
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('disable-notifications')
+    # chrome_options.add_argument('--headless')
+    browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
+    browser.maximize_window()
+
+>>>>>>> 6f66049 (multiprocessing)
     browser.get('https://www.amazon.com.tr/s?k=' + search_query)
     delay = 5
 
@@ -345,17 +366,29 @@ def amazon(brand, search_query):
         print_product(i)
 
     browser.quit()
+<<<<<<< HEAD
     end = time.time()
     print("The time of execution of Amazon script is :",
       (end-start) * 10**3, "ms")
     # return amazon_matched_products
 
 
+=======
+    exit(0)
+    # return amazon_matched_products
+
+
+
+
+>>>>>>> 6f66049 (multiprocessing)
 if __name__ == '__main__':
     search_query = "iphone 11"
     brand = "apple"
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6f66049 (multiprocessing)
     trendyol_process = mp.Process(target=trendyol,args=(brand,search_query))
     trendyol_process.start()
     amazon_process = mp.Process(target=amazon, args=(brand,search_query))
@@ -367,6 +400,10 @@ if __name__ == '__main__':
 # print("Amazon items\n\n\n", amazon_items)
 #browser.quit()
 #exit(0)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6f66049 (multiprocessing)
 
 
 

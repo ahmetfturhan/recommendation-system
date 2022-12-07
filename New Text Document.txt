@@ -1,0 +1,46 @@
+matched_products = []
+for t in trendyol_items:
+    for a in amazon_items:
+        t = t.lower()
+        a = a.lower()
+        t = t.replace('(', '')
+        t = t.replace(')', '')
+        t = t.replace('-', '')
+
+        a = a.replace('(', '')
+        a = a.replace(')', '')
+        a = a.replace('-', '')
+
+        trendyol_split = t.split(" ")
+        amazon_split = a.split(" ")
+
+        trendyol_split = remove_items(trendyol_split, "")
+        amazon_split = remove_items(amazon_split, "")
+
+        print("\nAmazon split, ", amazon_split)
+        print("\nTrendyol split, ", trendyol_split)
+        match_counter = 0
+        if len(trendyol_split) > len(amazon_split):
+            for i in amazon_split:
+                for j in trendyol_split:
+                    if i == j:
+                        match_counter += 1
+                        break
+
+            if match_counter >= int(len(amazon_split)*0.90):
+                print("Matched", t, a)
+                matched_products.append([a, t])
+
+        else:
+            match_counter = 0
+            for i in trendyol_split:
+                for j in amazon_split:
+                    if i == j:
+                        match_counter += 1
+                        break
+
+            if match_counter >= int(len(trendyol_split)*0.90):
+                print("Matched", t, a)
+                matched_products.append([a, t])
+
+print(matched_products)
