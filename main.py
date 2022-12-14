@@ -1,4 +1,7 @@
+import logging
+import sys
 import selenium as sl
+import multiprocessing as mp
 from selenium import webdriver
 from time import *
 from selenium.webdriver.support.ui import WebDriverWait
@@ -7,34 +10,39 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException 
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.chrome.service import Service
+import time
+import json
 
 class Product:
-    def __init__(self, name, price, link, image, rating, rating_count, merchant):
+    def __init__(self, name, price, link, image, rating, rating_count, merchant, merchant_rating):
         self.name = name
         self.price = price
         self.link = link
         self.image = image
         self.rating = rating
         self.rating_count = rating_count
-        self.merchant = merchant
+        self.merchant_name = merchant
+        self.merchant_rating = merchant_rating
 
 
 class Merchant:
-    def __init__(self, name, rating):
+    def __init__(self, name, rating, image):
         self.name = name
         self.rating = rating
+        self.image = image
 
 
 def print_product(product):
-    print("Name:", product.name)
-    print("Price:", product.price)
-    print("Link:", product.link)
-    print("Image:", product.image)
-    print("Rating:", product.rating)
-    print("Rating Count:", product.rating_count)
-    print("Merchant:", product.merchant.name)
-    print("Merchant Rating:", product.merchant.rating)
-    print("")
+    logging.info("Name:", product.name)
+    logging.info("Price:", product.price)
+    logging.info("Link:", product.link)
+    logging.info("Image:", product.image)
+    logging.info("Rating:", product.rating)
+    logging.info("Rating Count:", product.rating_count)
+    logging.info("Merchant:", product.merchant.name)
+    logging.info("Merchant Rating:", product.merchant.rating)
+    logging.info("")
 
 def check_exists_by_class(class_name, browser):
     try:
@@ -53,11 +61,19 @@ def check_exists_by_css(css_selector, browser):
 def remove_items(test_list, item):
  
     # using list comprehension to perform the task
-    res = [i for i in test_list if i != item]
+    (res := [i for i in test_list if i != item])
  
     return res
 
-def trendyol(browser, brand, search_query):
+def trendyol(trend_product_list_main, brand, search_query):
+    print("Starting Trendyol")
+    start = time.time()
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('disable-notifications')
+    chrome_options.add_argument('--headless')
+    browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
+    browser.maximize_window()
+    
     browser.get('https://www.trendyol.com/sr?q=' + search_query)
     delay = 5
 
@@ -89,18 +105,19 @@ def trendyol(browser, brand, search_query):
                 break
 
     browser.implicitly_wait(5)
-    sleep(5)
     trend_products_div = WebDriverWait(browser,10).until(EC.presence_of_all_elements_located((By.XPATH, '//div[contains(@class, "p-card-wrppr")]')))
 
-    print("Total found products: ", len(trend_products_div))
+    logging.info("Total found products: %d", len(trend_products_div))
  
     trend_link_list = []
     trend_product_list = []
-
+    trend_merchant_list = []
+    
     for i, item in enumerate(trend_products_div):
-        if i == 3:
+        if i == 10:
             break
-        print("Loading",(i / len(trend_products_div))*100,"%")
+        progress = (i / len(trend_products_div)) * 100
+        logging.info("Loading %.2f%%", progress)
 
         # get product descriptions
         try:
@@ -139,12 +156,12 @@ def trendyol(browser, brand, search_query):
             print("Couldn't get link", e)
         
                 #create a product object
-        new_product = Product(trend_product_desc, trend_product_price, trend_product_link, "0", 0 ,trend_product_rating_count, Merchant("null", "null"))
+        new_product = Product(trend_product_desc, trend_product_price, trend_product_link, "0", "000" ,trend_product_rating_count, "0", "0")
         trend_product_list.append(new_product)
 
     # product pages        
     for j, link in enumerate(trend_link_list):
-        if j == 3:
+        if j == 10:
             break
         browser.get(link)
 
@@ -156,7 +173,6 @@ def trendyol(browser, brand, search_query):
         try:
             #get img link
             trend_product_img = browser.find_element(By.XPATH, '//div[contains(@class, "base-product-image")]/div/img').get_property('src')
-            print(trend_product_img)
         except Exception as e:
             trend_product_img = "09"
             print("Couldn't get img", e)
@@ -176,27 +192,62 @@ def trendyol(browser, brand, search_query):
             print("Couldn't get merchant", e)
 
         #create a merchant object
-        new_merchant = Merchant(trend_product_merchant_name, trend_product_merchant_rating)
-        trend_product_list[j].merchant = new_merchant
-        trend_product_list[j].image = trend_product_img
+        new_merchant = Merchant(trend_product_merchant_name, trend_product_merchant_rating, trend_product_img)
+        trend_merchant_list.append(new_merchant)
 
-    print("Trendyol Products:\n")
-    for i in trend_product_list:
-        print_product(i)
-        
+    for i, item in enumerate(trend_product_list):
+        trproduct = Product(item.name, item.price, item.link, trend_merchant_list[i].image, item.rating, item.rating_count, trend_merchant_list[i].name, trend_merchant_list[i].rating)
+        trend_product_list_main.append(trproduct)
 
-    # trendyol_matched_products = []
+    # print("Trendyol Products:\n")
+    # for i in trend_product_list:
+    #     print_product(i)
+    
+    browser.quit()    
+    end = time.time()
+    print("The time of execution of Trendyol script is :",
+      (end-start) * 10**3, "ms")
+    trendyol_matched_products = []
+
     # for item in desc_list:
     #     if search_query.lower() in item.lower() and "kulaklık" not in item.lower() and "kılıf" not in item.lower():
     #         trendyol_matched_products.append(item)
     # return trendyol_matched_products
 
-def amazon(browser, brand, search_query):
+    
+
+def amazon(amazon_product_list_main, brand, search_query):
+    print("Starting Amazon")
+    start = time.time()
+    # random user agent generator
+    # fake = Faker()
+    # random_ua = fake.user_agent()
+    # print("fake user agent: ", random_ua)
+
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('disable-notifications')
+
+    #random user agent
+    # chrome_options.add_argument(f'user-agent="{random_ua}"')
+
+    chrome_options.add_argument('--headless')
+
+    service_obj = Service(rf"C:\Users\ahmet\AppData\Local\Programs\Python\Python39\chromedriver.exe")
+
+    chrome_options.add_experimental_option("useAutomationExtension", False)
+    chrome_options.add_experimental_option("excludeSwitches",["enable-automation"])
+
+
+    browser = webdriver.Chrome('chromedriver.exe', options=chrome_options, service=service_obj)
+    browser.maximize_window()
+
+
+
     browser.get('https://www.amazon.com.tr/s?k=' + search_query)
     delay = 5
 
     myElem = WebDriverWait(browser, delay).until(EC.presence_of_element_located(("xpath", '//*[@id="sp-cc-accept"]')))
-    print("Cookies Accepted")
+    logging.info("Cookies Accepted")
 
     # Click on the cookies button
     browser.find_element("xpath", '//*[@id="sp-cc-accept"]').click()
@@ -208,30 +259,26 @@ def amazon(browser, brand, search_query):
     #Select the brand
     for i in amazon_brand_filters:
         brand_name = i.find_element(By.CLASS_NAME, 'a-list-item').find_element(By.CLASS_NAME, 'a-link-normal').find_element(By.CLASS_NAME, 'a-size-base').text
-        print("brands", brand_name)
+        logging.debug("brands %s", brand_name)
         if i.text.lower() == brand.lower():
             i.find_element(By.CLASS_NAME, 'a-list-item').find_element(By.CLASS_NAME, 'a-link-normal').click()
             break
     
-    browser.implicitly_wait(3)
+    # browser.implicitly_wait(3)
 
 
-    product_desc = []
-    product_asin = []
-    product_price = []
-    product_ratings = []
-    product_ratings_num = []
+   
     product_link = []
-    product_merchant = []
+
 
     amazon_product_list = []
+    amazon_merchant_list = []
     items = WebDriverWait(browser,10).until(EC.presence_of_all_elements_located((By.XPATH, '//div[contains(@class, "s-result-item s-asin")]')))
     for j, item in enumerate(items):
-        if j == 3:
+        if j ==10:
             break
         #Get descriptions
         amazon_product_desc = item.find_element(By.XPATH, './/span[@class="a-size-base-plus a-color-base a-text-normal"]')
-        product_desc.append(amazon_product_desc.text)
 
         # Find price
         amazon_whole_price = item.find_elements(By.XPATH, './/span[@class="a-price-whole"]')
@@ -241,7 +288,6 @@ def amazon(browser, brand, search_query):
             price = '.'.join([amazon_whole_price[0].text, amazon_fraction_price[0].text])
         else:
             price = 0
-        product_price.append(price)
 
         #get rratings
         amazon_rating_box = item.find_elements(By.XPATH, './/div[@class="a-row a-size-small"]/span')
@@ -250,24 +296,23 @@ def amazon(browser, brand, search_query):
             amazon_ratings = amazon_rating_box[0].get_attribute('aria-label')
             amazon_rating_num = amazon_rating_box[1].get_attribute('aria-label')
         else:
-            ratings = 0
-            ratings_num = 0
-        product_ratings.append(amazon_ratings)
-        product_ratings_num.append(amazon_rating_num)
+            amazon_ratings = 0
+            amazon_rating_num = 0
+
 
         #get links
         amazon_product_link = item.find_element(By.XPATH, './/a[@class="a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal"]').get_attribute('href')
         product_link.append(amazon_product_link)
 
-        new_product = Product(amazon_product_desc.text, price, amazon_product_link, "09", amazon_ratings, amazon_rating_num, "000")
+        new_product = Product(amazon_product_desc.text, price, amazon_product_link, "0", amazon_ratings, amazon_rating_num, "0", "0")
         amazon_product_list.append(new_product)
 
     for i, link in enumerate(product_link):
-        if i == 3:
+        if i == 10:
             break
         browser.get(link)
         # browser.implicitly_wait(3)
-        WebDriverWait(browser,10).until(EC.presence_of_all_elements_located((By.XPATH, '//img[@id="landingImage"]')))
+        WebDriverWait(browser,5).until(EC.presence_of_all_elements_located((By.XPATH, '//img[@id="landingImage"]')))
 
         #Get merchant info
         try:
@@ -275,23 +320,29 @@ def amazon(browser, brand, search_query):
 
             if len(merchant_info) != 0:
                 merchant_name = merchant_info[0].text
-                product_merchant.append(merchant_name)
             else:
-                merchant_name = "Amazon.com.trr"   
+                merchant_name = "Amazon.com.tr"   
 
         except:
             merchant_name = "Amazon.com.tr"   
         
         #Get image
         try:
+            #amazon_image = browser.find_element(By.XPATH, '//img[@class="s-image"]')
             amazon_image = browser.find_element(By.XPATH, '//img[@id="landingImage"]')
             amazon_image_src = amazon_image.get_attribute('src')
         except:
             amazon_image_src = "0"
         
-        new_merchant = Merchant(merchant_name, 0)
-        amazon_product_list[i].merchant = new_merchant
-        amazon_product_list[i].image = amazon_image_src
+        new_merchant = Merchant(merchant_name, 0, amazon_image_src)
+        amazon_merchant_list.append(new_merchant)
+
+        # amazon_product_list[i].merchant = new_merchant
+        # amazon_product_list[i].image = amazon_image_src
+
+    for i, item in enumerate(amazon_product_list):
+        product_obj = Product(item.name, item.price, item.link, amazon_merchant_list[i].image, item.rating, item.rating_count, amazon_merchant_list[i].name, amazon_merchant_list[i].rating)
+        amazon_product_list_main.append(product_obj)
 
     product_string = brand.lower() + " " + search_query.lower()
 
@@ -300,73 +351,72 @@ def amazon(browser, brand, search_query):
     #     if product_string in desc.lower() and "kılıf" not in desc.lower():
     #         amazon_matched_products.append(desc)
 
-    print("Amazon Products:\n")
-    for i in amazon_product_list:
-        print_product(i)
+    # print("Amazon Products:\n")
+    # for i in amazon_product_list:
+    #     print_product(i)
 
     browser.quit()
+    end = time.time()
+    print("The time of execution of Amazon script is :",
+      (end-start) * 10**3, "ms")
     # return amazon_matched_products
 
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument('disable-notifications')
-# chrome_options.add_argument('--headless')
-browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
-browser.maximize_window()
-search_query = "iphone 11"
-brand = "apple"
+    return amazon_product_list
 
-trendyol_items = trendyol(browser, brand, search_query)
-amazon_items = amazon(browser, brand, search_query)
+
+
+
+if __name__ == '__main__':
+    #Get search_query and brand from command line
+    # search_query = sys.argv[1].strip()
+    # brand = sys.argv[2].strip()
+
+    search_query = "iphone 11"
+    brand = "apple"
+
+
+    #Replace + with space
+    search_query = search_query.replace("+", " ")
+    brand = brand.replace("+", " ")
+
+    print("Search query: ", search_query)
+    print("Brand:", brand)
+
+    manager = mp.Manager()
+    trendyol_product_list_main = manager.list()
+    amazon_product_list_main = manager.list()
+
+    trendyol_process = mp.Process(target=trendyol,args=(trendyol_product_list_main, brand,search_query))
+    trendyol_process.start()
+    amazon_process = mp.Process(target=amazon, args=(amazon_product_list_main, brand,search_query))
+    amazon_process.start()
+
+    # trendyol_process.join()
+    amazon_process.join()
+
+    f = open("amazon.txt", "wb")
+    for i in amazon_product_list_main:
+        f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))
+        f.write("\n".encode('utf-8'))
+    f.close()
+
+    
+    f = open("trendyol.txt", "wb")
+    for i in trendyol_product_list_main:
+        f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))
+        f.write("\n".encode('utf-8'))
+    f.close()
+    # print("Trendyol items\n", trendyol_product_list_main)
+    # for i in trendyol_product_list_main:
+    #     print_product(i)
+
+    # print("Amazon items\n\n\n", amazon_product_list_main)
+    # for i in amazon_product_list_main:
+    #     print_product(i)
+
+#trendyol_items = trendyol(browser, brand, search_query)
+#amazon_items = amazon(browser, brand, search_query)
 # print("Trendyol items\n", trendyol_items)
 # print("Amazon items\n\n\n", amazon_items)
-browser.quit()
-exit(0)
-matched_products = []
-for t in trendyol_items:
-    for a in amazon_items:
-        t = t.lower()
-        a = a.lower()
-        t = t.replace('(', '')
-        t = t.replace(')', '')
-        t = t.replace('-', '')
-
-        a = a.replace('(', '')
-        a = a.replace(')', '')
-        a = a.replace('-', '')
-
-        trendyol_split = t.split(" ")
-        amazon_split = a.split(" ")
-
-        trendyol_split = remove_items(trendyol_split, "")
-        amazon_split = remove_items(amazon_split, "")
-
-        print("\nAmazon split, ", amazon_split)
-        print("\nTrendyol split, ", trendyol_split)
-        match_counter = 0
-        if len(trendyol_split) > len(amazon_split):
-            for i in amazon_split:
-                for j in trendyol_split:
-                    if i == j:
-                        match_counter += 1
-                        break
-
-            if match_counter >= int(len(amazon_split)*0.90):
-                print("Matched", t, a)
-                matched_products.append([a, t])
-
-        else:
-            match_counter = 0
-            for i in trendyol_split:
-                for j in amazon_split:
-                    if i == j:
-                        match_counter += 1
-                        break
-
-            if match_counter >= int(len(trendyol_split)*0.90):
-                print("Matched", t, a)
-                matched_products.append([a, t])
-
-print(matched_products)
-
-
-
+#browser.quit()
+#exit(0)
