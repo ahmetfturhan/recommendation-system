@@ -3,7 +3,6 @@ from flask import render_template
 import subprocess
 import json
 
-
 app = Flask(__name__)
 
 class Merchant:
@@ -48,38 +47,28 @@ def index():
 
     tproducts = []
     for i in trendyoltxt:
-        jsonstr = json.loads(i)
-        tproducts.append(jsonstr)
+        tproducts.append(json.loads(i))
+
+    f = open("groups.txt", "r", encoding="utf-8")
+    groups = f.readlines()
+    f.close()
+
+    matched = [[]]
+    matched_index = 0
+    for counter, i in enumerate(groups):
+        if counter == len(groups)- 1:
+            break
+        if i == "###\n":
+            matched.append([])
+            matched_index += 1
+            continue
+        matched[matched_index].append(json.loads(i))
+
+    # print("From Flask\n")
+    # for counter, i in enumerate(matched):
+    #     print("Group", counter, ":\n")
+    #     for j in i:
+    #         print(j["name"], "\n")
 
     return render_template('index.html', aproducts = aproducts, tproducts = tproducts)
     
-    
-    # eski flaskui.py kodlarÄ±
-    
-    #search_query = "iphone 11"
-    #search_query = search_query.replace(" ", "+")
-
-    #brand = "apple"
-    #brand = brand.replace(" ", "+")
-    #subprocess.call(f'python main.py {search_query} {brand}', shell=True)
-
-    #f = open("amazon.txt", "r", encoding="utf-8")
-    #amazontxt = f.readlines()
-    #f.close()
-
-    #aproducts = []
-    #for i in amazontxt:
-        #jsonstr = json.loads(i)
-        #aproducts.append(jsonstr)
-
-    
-    #f = open("trendyol.txt", "r", encoding="utf-8")
-    #trendyoltxt = f.readlines()
-    #f.close()
-
-    #tproducts = []
-    #for i in trendyoltxt:
-        #jsonstr = json.loads(i)
-        #tproducts.append(jsonstr)
-
-    #return render_template('welcomePage.html', aproducts = aproducts, tproducts = tproducts)
