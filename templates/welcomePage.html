@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <div>
+        <title>Interactive Search and Recommendation System</title>
+    </div>
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{{ url_for('static', filename='welcomePage.css')}}">
+</head>
+<body>
+    <div class="page_header">
+        <p class="site_name">Search and Recommend</p>
+    </div>
+    <div class="middle_content">
+    <p class="middle_text">Search and Compare for the best product.</p>
+    <i class="gg-search"></i>
+    <form action="/search" method="post">
+    <input id="searchBar" class = "search_bar" type="text"  name="query" placeholder="Search for products...">
+    <input id="searchBar" class = "search_bar" type="text"  name="brand" placeholder="Enter the brand">
+    <input type="submit" value="Submit">
+</form>
+    </div>
+    <section>
+    <div class="container">
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i> 
+                <i class="fa-solid fa-mobile"></i>
+                <i class="fa-solid fa-laptop"></i>            
+                <i class="fa-solid fa-car"></i>
+                <i class="fa-sharp fa-solid fa-headphones"></i>            
+                <i class="fa-solid fa-bicycle"></i>
+                <i class="fa-solid fa-book"></i>
+                <i class="fa-solid fa-shirt"></i>
+                <i class="fa-solid fa-link"></i>
+                <i class="fa-solid fa-tv"></i>
+                <i class="fa-solid fa-utensils"></i>
+                <i class="fa-solid fa-box-open"></i>
+                <i class="fa-solid fa-credit-card"></i>
+                <i class="fa-solid fa-gamepad"></i>
+                <i class="fa-solid fa-bag-shopping"></i>
+                <i class="fa-solid fa-microphone-lines"></i>
+                <i class="fa-solid fa-futbol"></i>
+                <i class="fa-solid fa-dumbbell"></i>           
+            </div>
+        </div>
+       
+        
+    </div>
+    </section>
+    <script src="https://kit.fontawesome.com/2d3a71017c.js" crossorigin="anonymous"></script>
+
+
+
+
+
+</body>
+</html>
