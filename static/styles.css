@@ -1,5 +1,10 @@
 @import url('https://css.gg/search.css');
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css");
+
+html{
+  scroll-behavior: smooth; 
+}
+
 body {
   font-family: 'Source Sans Pro', sans-serif;
   overflow-x: hidden;
@@ -28,10 +33,15 @@ body {
     color: white;
     padding: 20px;
   }
-  header h1 {
+
+  h1{
+    font-size: 50px;
+    font-weight: bold;
     margin: 0;
-    font-size: 24px;
   }
+ .card-title{
+  font-weight: bold;
+ }
   
   
   input[type="text"] {
@@ -44,54 +54,92 @@ body {
   }
 
 
-.product_image{
-  inline-size: 100%;
-  width: fit-content;
-  height: 450px;
-  object-fit: cover;
-}
+
 
 .containers{
-  
+  overflow-y: scroll;
   scroll-snap-type: y proximity;
+}
+.containers::-webkit-scrollbar {
+  display: none;
 }
 
 .card_container {
+  flex: none;
+  scroll-snap-align: start;
   
   display: flex;
   width: 100vw;
-  height: 100vh;
+  height: auto;
   overflow-x: scroll;
-  overflow-x: hidden;
   scroll-snap-type: x mandatory;
-  padding: 50px;
-  overflow-y: scroll;
+  
+  padding: 30px;
+  overflow-y: hidden;
   overscroll-behavior-inline: contain;
 }
 
+.card_container::-webkit-scrollbar {
+  display: none;
+}
 
 .card_box{
   flex: none;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw;
+  width: 38vw;
+  height: max-content;
   scroll-snap-align: start;
+  padding-top: 100px;
+  
+
 }
 
 .card {
-  width: 350px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 650px;
   margin: 10px;
   box-shadow: 0 8px 12px 0 rgba(0, 0, 0, 0.2);
   transition: 0.3s;
-  border-radius: 5px;
-  padding: 20px;
+  border-radius: 10px;
+  border-width: 1px;
+  border-color: rgb(61, 60, 60);
+  padding: 10px;
+  height: auto;
+
 }
 
 .card:hover {
   box-shadow: 0 16px 24px 0 rgba(0, 0, 0, 0.2);
   transform: scale(1.05);
   opacity: 1;
+  
+}
+
+.image_and_info{
+  display: flex;
+  flex-direction: row;
+  max-height: 350px;
+}
+.product_info{
+  
+  margin-top: 10px;
+  padding-left: 35px;
+  max-height: 350px;
+}
+.product_button{
+  margin-top: 30px;
+  margin-bottom: 10px;
+  
+}
+
+.product_image{
+  height: 230px;
+  zoom: 1.2;
+  margin-left: 20px;
+  max-width: 230px;
 }
 
 .site_header {
