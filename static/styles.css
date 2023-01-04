@@ -2,14 +2,23 @@
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css");
 body {
   font-family: 'Source Sans Pro', sans-serif;
+  overflow-x: hidden;
+  
   }
   nav {
+    
     background-color: #333;
     color: white;
     padding: 20px;
+    display: flex;
+    justify-content:space-between ;
+    align-items: baseline;
   }
 
-  
+  .nav_info{
+    margin-right: 100px ;
+  }
+
   nav a {
     color: white;
     text-decoration: none;
@@ -23,11 +32,7 @@ body {
     margin: 0;
     font-size: 24px;
   }
-  nav {
-    display: flex;
-    justify-content:space-between ;
-    align-items: baseline;
-  }
+  
   
   input[type="text"] {
     width: 400px;
@@ -37,26 +42,41 @@ body {
     border: 2px solid #ccc;
     border-radius: 4px;
   }
-.product_card{
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 100px;
-}
+
 
 .product_image{
-  width: auto;
+  inline-size: 100%;
+  width: fit-content;
   height: 450px;
   object-fit: cover;
 }
+
+.containers{
+  
+  scroll-snap-type: y proximity;
+}
+
 .card_container {
+  
   display: flex;
-  width: 100%;
-  flex-direction: column;
-  flex-wrap: wrap;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: scroll;
+  overflow-x: hidden;
+  scroll-snap-type: x mandatory;
+  padding: 50px;
+  overflow-y: scroll;
+  overscroll-behavior-inline: contain;
+}
+
+
+.card_box{
+  flex: none;
+  display: flex;
   justify-content: center;
-  padding: 60px;
+  align-items: center;
+  width: 100vw;
+  scroll-snap-align: start;
 }
 
 .card {
