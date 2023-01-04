@@ -11,6 +11,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException 
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 import time
 import json
 import argparse
@@ -142,8 +143,15 @@ def remove_items(test_list, item):
     return res
 
 def trendyol(trend_product_list_main, brand, search_query):
+    product_number = 8
     print("Starting Trendyol")
     start = time.time()
+    
+# Print the ChromeDriver version
+    
+
+# Set the vhs options
+    
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('disable-notifications')
     chrome_options.add_argument('--headless')
@@ -192,7 +200,7 @@ def trendyol(trend_product_list_main, brand, search_query):
     trend_merchant_list = []
     trend_temp_list = []
     for i, item in enumerate(trend_products_div):
-        if i == 12:
+        if i == product_number:
             break
         progress = (i / len(trend_products_div)) * 100
         logging.info("Loading %.2f%%", progress)
@@ -245,7 +253,7 @@ def trendyol(trend_product_list_main, brand, search_query):
 
     # product pages        
     for j, link in enumerate(trend_link_list):
-        if j == 12:
+        if j == product_number:
             break
         browser.get(link)
 
@@ -313,6 +321,7 @@ def trendyol(trend_product_list_main, brand, search_query):
     
 
 def amazon(amazon_product_list_main, brand, search_query):
+    product_number = 8
     print("Starting Amazon")
     start = time.time()
 
@@ -362,7 +371,7 @@ def amazon(amazon_product_list_main, brand, search_query):
     amazon_merchant_list = []
     items = WebDriverWait(browser,10).until(EC.presence_of_all_elements_located((By.XPATH, '//div[contains(@class, "s-result-item s-asin")]')))
     for j, item in enumerate(items):
-        if j ==12:
+        if j ==product_number:
             break
         #Get descriptions
         amazon_product_desc = item.find_element(By.XPATH, './/span[@class="a-size-base-plus a-color-base a-text-normal"]')
@@ -400,7 +409,7 @@ def amazon(amazon_product_list_main, brand, search_query):
         amazon_product_list.append(new_product)
 
     for i, link in enumerate(product_link):
-        if i == 12:
+        if i == product_number:
             break
         browser.get(link)
 
@@ -492,7 +501,7 @@ if __name__ == '__main__':
     # Trendyol Grouping
     matched_products = []
     matched_products_index = -1
-    similarity_rate = 0.75
+    similarity_rate = 0.90
 
     while len(trendyol_product_list_main) != 0:
 
@@ -575,4 +584,11 @@ if __name__ == '__main__':
             f.write((json.dumps(j.__dict__, ensure_ascii=False)).encode('utf8'))
             f.write("\n".encode('utf-8'))
         f.write("###\n".encode('utf-8'))
+    f.close()
+
+    f = open("no_groups.txt", "wb")
+    for i in products_with_no_match:    
+        f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))
+        f.write("\n".encode('utf-8'))
+    f.write("###\n".encode('utf-8'))
     f.close()

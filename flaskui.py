@@ -12,7 +12,7 @@ class Merchant:
 
 @app.route('/')
 def welcome():
-    return render_template('base.html')
+    return render_template('_base.html')
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -64,11 +64,22 @@ def index():
             continue
         matched[matched_index].append(json.loads(i))
 
+    
+    
+    f = open("no_groups.txt", "r", encoding="utf-8")
+    no_groups = f.readlines()
+    f.close()
+
+    not_matched = []
+    for counter, i in enumerate(no_groups):
+        if counter == len(no_groups)- 1:
+            break
+        not_matched.append(json.loads(i))
+
     # print("From Flask\n")
     # for counter, i in enumerate(matched):
     #     print("Group", counter, ":\n")
     #     for j in i:
     #         print(j["name"], "\n")
 
-    return render_template('index.html', aproducts = aproducts, tproducts = tproducts)
-    
+    return render_template('_index.html', matched=matched, not_matched=not_matched)

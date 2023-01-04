@@ -1,0 +1,2 @@
+{"name": "apple iPhone 11 Pro Max 256GB Gümüş (Apple Türkiye Garantili) Aksesuarlı Kutu", "price": "39.990 TL", "link": "https://www.trendyol.com/apple/iphone-11-pro-max-256gb-gumus-apple-turkiye-garantili-aksesuarli-kutu-p-32055399?boutiqueId=61&merchantId=446083", "image": "https://cdn.dsmcdn.com/ty94/product/media/images/20210404/09/74346117/57616583/1/1_org_zoom.jpg", "rating": "000", "rating_count": "27", "merchant_name": "ALTUNPARMAK TEKNOLOJİ", "merchant_rating": "9.5"}
+###
