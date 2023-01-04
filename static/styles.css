@@ -79,9 +79,7 @@ body {
   overscroll-behavior-inline: contain;
 }
 
-.card_container::-webkit-scrollbar {
-  display: none;
-}
+
 
 .card_box{
   flex: none;
