@@ -590,5 +590,4 @@ if __name__ == '__main__':
     for i in products_with_no_match:    
         f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))
         f.write("\n".encode('utf-8'))
-    f.write("###\n".encode('utf-8'))
     f.close()

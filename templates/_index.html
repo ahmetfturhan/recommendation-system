@@ -2,6 +2,7 @@
 
 {% block groups %}
 {% for group in matched %}
+<div class="card_container">
 {% for item in group %}
 <div class="card_box">
   <div class="card">
@@ -25,6 +26,7 @@
     </div>
   </div>
 {% endfor %}
+</div>
 {% endfor %}
 {% endblock %}
 
