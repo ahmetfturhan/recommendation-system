@@ -199,6 +199,8 @@ def trendyol(trend_product_list_main, brand, search_query):
     trend_product_list = []
     trend_merchant_list = []
     trend_temp_list = []
+    trend_rating_list = []
+
     for i, item in enumerate(trend_products_div):
         if i == product_number:
             break
@@ -235,6 +237,10 @@ def trendyol(trend_product_list_main, brand, search_query):
             except Exception as e:
                 trend_product_price = "0"
                 print("Couldn't get price", e)
+        if trend_product_price != 0:
+            trend_product_price = trend_product_price.replace("TL", "")
+            trend_product_price = trend_product_price.replace(",", ".")
+            trend_product_price = trend_product_price.strip()
 
         # get links
         try:
@@ -258,7 +264,7 @@ def trendyol(trend_product_list_main, brand, search_query):
         browser.get(link)
 
         #wait for max 10 seconds to load the page
-        WebDriverWait(browser, 10).until(
+        WebDriverWait(browser, 5).until(
         EC.presence_of_element_located((By.CLASS_NAME, "product-seller-line"))
     )
         # get images
@@ -283,20 +289,26 @@ def trendyol(trend_product_list_main, brand, search_query):
             trend_product_merchant_rating = "0"
             print("Couldn't get merchant", e)
 
+        # get rating
+        try:
+            # trend_product_rating_box = browser.find_element(By.XPATH, '//div[contains(@class, "product-detail-container")]')
+            rating = browser.find_element(By.XPATH, '//div[contains(@class, "pr-rnr-sm-p")]/span').text
+            # print("qqqqqqqqqqqqqqqqqqqq", rating)
+        except Exception as e:
+            rating = "0"
+            print("Couldn't get rating", e)
+
         #create a merchant object
         new_merchant = Merchant(trend_product_merchant_name, trend_product_merchant_rating, trend_product_img)
         trend_merchant_list.append(new_merchant)
+        trend_rating_list.append(rating)
 
     for i, item in enumerate(trend_product_list):
-        item.name = brand + " " + item.name
-        trproduct = Product(item.name, item.price, item.link, trend_merchant_list[i].image, item.rating, item.rating_count, trend_merchant_list[i].name, trend_merchant_list[i].rating)
-        # trend_product_list_main.append(trproduct)
+        item.name = brand.capitalize() + " " + item.name
+        trproduct = Product(item.name, item.price, item.link, trend_merchant_list[i].image, trend_rating_list[i], item.rating_count, trend_merchant_list[i].name, trend_merchant_list[i].rating)
         trend_temp_list.append(trproduct)
 
-    # print("Trendyol Products:\n")
-    # for i in trend_product_list:
-    #     print_product(i)
-    
+ 
     browser.quit()    
     end = time.time()
     print("The time of execution of Trendyol script is :",
@@ -479,6 +491,7 @@ if __name__ == '__main__':
 
     trendyol_process = mp.Process(target=trendyol,args=(trendyol_product_list_main, brand,search_query))
     trendyol_process.start()
+
     amazon_process = mp.Process(target=amazon, args=(amazon_product_list_main, brand,search_query))
     amazon_process.start()
 
