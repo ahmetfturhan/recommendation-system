@@ -55,6 +55,11 @@ body {
 
 
 
+.logoAndHeader {
+  height:90px;
+  width: 90px;
+}
+
 
 .containers{
   overflow-y: scroll;
@@ -79,25 +84,7 @@ body {
   overscroll-behavior-inline: contain;
 }
 
-.card_container_no_match {
-  flex: none;
-  scroll-snap-align: start;
-  
-  display: flex;
-  flex-direction: column;
-  width: 100vw;
-  height: auto;
-  overflow-y: scroll;
-  scroll-snap-type: y mandatory;
-  
-  padding: 30px;
-  overscroll-behavior-inline: contain;
-}
 
-.no_match_containers {
-  display: flex;
-  flex-direction: row;
-}
 
 
 .card_box{
