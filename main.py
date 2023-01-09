@@ -572,18 +572,18 @@ if __name__ == '__main__':
 
     # Move the products with no match to a separate list 
     to_be_removed = []
-    products_with_no_match = []
+    no_match = []
     for i, group in enumerate(matched_products):
         if len(group) == 1:
             to_be_removed.append(i)
-            products_with_no_match.append(group[0])
+            no_match.append(group[0])
 
     for i in sorted(to_be_removed, reverse=True):
         matched_products.pop(i)
 
     # Append the products with no match to the end of the no match list
     for i in amazon_product_list_main:
-        products_with_no_match.append(i)
+        no_match.append(i)
 
     matched_products_with_formula = []
 
@@ -597,15 +597,15 @@ if __name__ == '__main__':
 
             if j.merchant_name == "Amazon.com.tr":
                 j.merchant_rating = 10.0
-                
+
             j.formula_rank = float(j.rating_count) * 0.3 + float(j.rating) * 0.2 + float(j.merchant_rating) * 0.1 - float(temp_price) * 0.4
             
         templist = sorted(i, key=lambda x: x.formula_rank, reverse=True)
         matched_products_with_formula.append(templist)
 
-    products_with_no_match_with_formula = []    
+    no_match_with_formula = []    
     # Use formula to order no match
-    for i in products_with_no_match:
+    for i in no_match:
         temp_price = int(str(i.price).replace(".", ""))
 
         if str(i.merchant_rating) == "0":
@@ -613,12 +613,12 @@ if __name__ == '__main__':
 
         i.formula_rank = float(i.rating_count) * 0.3 + float(i.rating) * 0.2 + float(i.merchant_rating) * 0.1 - float(temp_price) * 0.4
 
-    products_with_no_match_with_formula = sorted(products_with_no_match, key=lambda x: x.formula_rank, reverse=True)
+    no_match_with_formula = sorted(no_match, key=lambda x: x.formula_rank, reverse=True)
         
     no_match_amazon = []
     no_match_trendyol = []
 
-    for i in products_with_no_match_with_formula:
+    for i in no_match_with_formula:
         if i.website == "Amazon":
             no_match_amazon.append(i)
         else:
@@ -626,15 +626,37 @@ if __name__ == '__main__':
     
     no_match_trendyol = sorted(no_match_trendyol, key=lambda x: x.formula_rank, reverse=True)
     no_match_amazon = sorted(no_match_amazon, key=lambda x: x.formula_rank, reverse=True)
+    group_labels = []
+    
+    for counter, i in enumerate(matched_products_with_formula):
+        min_length_item = {"item": "", "length": 999}
+        for j in i:
+            current_product = remove_punctuation(j)
+            if len(current_product) < min_length_item["length"]:
+                min_length_item["length"] = len(current_product)
+                min_length_item["item"] = j
+        label_item = remove_punctuation(min_length_item["item"])
 
+        for item in i:
+            current_product = remove_punctuation(item)
+            
+            for word in label_item:
+                if word in current_product:
+                    continue
+                else:
+                    label_item.remove(word)
+        label_item = [x.capitalize() for x in label_item]            
+        label_item = " ".join(label_item)
+        group_labels.append({"name": label_item})
 
+        print("Group", counter, ":", label_item)
     for counter, i in enumerate(matched_products_with_formula):
         print("Group", counter, ":\n")
         for j in i:
             print(j.name,"  Rank: ", j.formula_rank ,"\n")
 
     print("Products with no match: \n")
-    for i in products_with_no_match:
+    for i in no_match:
         print(i.name, "\n")
 
     f = open("groups.txt", "wb")
@@ -654,5 +676,11 @@ if __name__ == '__main__':
     f = open("no_groups_trendyol.txt", "wb")
     for i in no_match_trendyol:    
         f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))
+        f.write("\n".encode('utf-8'))
+    f.close()
+
+    f = open("labels.txt", "wb")
+    for i in group_labels:    
+        f.write((json.dumps(i, ensure_ascii=False)).encode('utf8'))
         f.write("\n".encode('utf-8'))
     f.close()

@@ -90,5 +90,14 @@ def index():
     for i in not_matched_trendyol:
         print(i["name"], "\n")
 
+    f = open("labels.txt", "r", encoding="utf-8")
+    no_groups = f.readlines()
+    f.close()
 
-    return render_template('_index.html', matched=matched, not_matched_amazon=not_matched_amazon, not_matched_trendyol=not_matched_trendyol)
+    labels = []
+    for counter, i in enumerate(no_groups):
+
+        labels.append(json.loads(i))
+
+
+    return render_template('_index.html', matched=matched, not_matched_amazon=not_matched_amazon, not_matched_trendyol=not_matched_trendyol, labels=labels)
