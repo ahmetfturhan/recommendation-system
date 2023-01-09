@@ -92,7 +92,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 38vw;
   height: max-content;
   scroll-snap-align: start;
   padding-top: 100px;
