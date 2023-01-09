@@ -32,8 +32,8 @@
 {% endblock %}
 
 
-{% block no_match %}
-{% for item in not_matched %}
+{% block no_match_amazon %}
+{% for item in not_matched_amazon %}
 <div class="card_box">
   <div class="card">
     <div class="image_and_info">
@@ -42,6 +42,33 @@
         <div class="product_info">
           <p class="card-title">{{ item["name"] }}</p>
           <p class="card-text">Price: {{ item["price"] }}</p>
+          <p class="card-text">Times-Rated: {{ item["rating_count"] }}</p>
+          <p class="card-text">Merchant: {{ item["merchant_name"] }}</p>
+          <p class="card-text">Merchant-Rating: {{ item["merchant_rating"] }}</p>
+          <div class="product_button">
+            <a href="{{ item["link"] }}"  target="_blank" rel="noopener noreferrer" class="btn btn-primary">Go to Product</a>
+          </div>
+
+        </div>
+        
+    </div> 
+      
+  
+    </div>
+  </div>
+  {% endfor %}
+{% endblock %}
+
+{% block no_match_trendyol %}
+{% for item in not_matched_trendyol %}
+<div class="card_box">
+  <div class="card">
+    <div class="image_and_info">
+      <img class="product_image" src="{{ item["image"] }}"  alt="...">
+      
+        <div class="product_info">
+          <p class="card-title">{{ item["name"] }}</p>
+          <p class="card-text">Price: {{ item["price"] }} TL</p>
           <p class="card-text">Times-Rated: {{ item["rating_count"] }}</p>
           <p class="card-text">Merchant: {{ item["merchant_name"] }}</p>
           <p class="card-text">Merchant-Rating: {{ item["merchant_rating"] }}</p>

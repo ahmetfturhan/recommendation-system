@@ -19,7 +19,7 @@ import string
 
 
 class Product:
-    def __init__(self, name, price, link, image, rating, rating_count, merchant_name, merchant_rating):
+    def __init__(self, name, price, link, image, rating, rating_count, merchant_name, merchant_rating, website):
         self.name = name
         self.price = price
         self.link = link
@@ -28,6 +28,8 @@ class Product:
         self.rating_count = rating_count
         self.merchant_name = merchant_name
         self.merchant_rating = merchant_rating
+        self.formula_rank = 0
+        self.website = website
 
 
 class Merchant:
@@ -252,7 +254,7 @@ def trendyol(trend_product_list_main, brand, search_query):
             print("Couldn't get link", e)
         
                 #create a product object
-        new_product = Product(trend_product_desc, trend_product_price, trend_product_link, "0", "000" ,trend_product_rating_count, "0", "0")
+        new_product = Product(trend_product_desc, trend_product_price, trend_product_link, "0", "000" ,trend_product_rating_count, "0", "0", "Trendyol")
         if trend_product_price == "0":
             continue
         trend_product_list.append(new_product)
@@ -305,7 +307,7 @@ def trendyol(trend_product_list_main, brand, search_query):
 
     for i, item in enumerate(trend_product_list):
         item.name = brand.capitalize() + " " + item.name
-        trproduct = Product(item.name, item.price, item.link, trend_merchant_list[i].image, trend_rating_list[i], item.rating_count, trend_merchant_list[i].name, trend_merchant_list[i].rating)
+        trproduct = Product(item.name, item.price, item.link, trend_merchant_list[i].image, trend_rating_list[i], item.rating_count, trend_merchant_list[i].name, trend_merchant_list[i].rating, item.website)
         trend_temp_list.append(trproduct)
 
  
@@ -390,10 +392,10 @@ def amazon(amazon_product_list_main, brand, search_query):
 
         # Find price
         amazon_whole_price = item.find_elements(By.XPATH, './/span[@class="a-price-whole"]')
-        amazon_fraction_price = item.find_elements(By.XPATH,'.//span[@class="a-price-fraction"]')
+        # amazon_fraction_price = item.find_elements(By.XPATH,'.//span[@class="a-price-fraction"]') # we dont need fraction
 
-        if amazon_whole_price != [] and amazon_fraction_price != []:
-            price = '.'.join([amazon_whole_price[0].text, amazon_fraction_price[0].text])
+        if amazon_whole_price != []:
+            price = amazon_whole_price[0].text
         else:
             price = 0
         
@@ -405,6 +407,7 @@ def amazon(amazon_product_list_main, brand, search_query):
 
         if amazon_rating_box != []:
             amazon_ratings = amazon_rating_box[0].get_attribute('aria-label')
+            amazon_ratings = str(amazon_ratings.split(" ")[-1]).replace(",",".")
             amazon_rating_num = amazon_rating_box[1].get_attribute('aria-label')
         else:
             amazon_ratings = 0
@@ -417,7 +420,7 @@ def amazon(amazon_product_list_main, brand, search_query):
 
         amazon_product_image = item.find_element(By.XPATH, './/img[@class="s-image"]').get_attribute('src')
 
-        new_product = Product(amazon_product_desc.text, price, amazon_product_link, amazon_product_image, amazon_ratings, amazon_rating_num, "0", "0")
+        new_product = Product(amazon_product_desc.text, price, amazon_product_link, amazon_product_image, amazon_ratings, amazon_rating_num, "0", "0", "Amazon")
         amazon_product_list.append(new_product)
 
     for i, link in enumerate(product_link):
@@ -443,7 +446,7 @@ def amazon(amazon_product_list_main, brand, search_query):
         amazon_merchant_list.append(new_merchant)
 
     for i, item in enumerate(amazon_product_list):
-        product_obj = Product(item.name, item.price, item.link, item.image, item.rating, item.rating_count, amazon_merchant_list[i].name, amazon_merchant_list[i].rating)
+        product_obj = Product(item.name, item.price, item.link, item.image, item.rating, item.rating_count, amazon_merchant_list[i].name, amazon_merchant_list[i].rating, item.website)
         amazon_temp_list.append(product_obj)
 
 
@@ -514,7 +517,7 @@ if __name__ == '__main__':
     # Trendyol Grouping
     matched_products = []
     matched_products_index = -1
-    similarity_rate = 0.90
+    SIMILARITY_RATE = 0.74
 
     while len(trendyol_product_list_main) != 0:
 
@@ -535,7 +538,7 @@ if __name__ == '__main__':
 
         ever_matched = False
         for counter, i in enumerate(trendyol_product_list_main):
-            matched = match_similar(max_product, i, similarity_rate)
+            matched = match_similar(max_product, i, SIMILARITY_RATE)
             if matched:
                 matched_products[matched_products_index].append(i)
                 to_be_removed.append(counter)
@@ -559,7 +562,7 @@ if __name__ == '__main__':
         max_product_of_current_group = matched_products[i][-1]
         to_be_removed = []
         for counter, item in enumerate(amazon_product_list_main):
-            is_matched = match_similar(max_product_of_current_group, item, similarity_rate)
+            is_matched = match_similar(max_product_of_current_group, item, SIMILARITY_RATE)
             if is_matched:
                 matched_products[i].append(item)
                 to_be_removed.append(counter)
@@ -581,26 +584,75 @@ if __name__ == '__main__':
     # Append the products with no match to the end of the no match list
     for i in amazon_product_list_main:
         products_with_no_match.append(i)
+
+    matched_products_with_formula = []
+
+    # Use the formula to order items
+    for i in matched_products:
+        for j in i:
+            temp_price = int(str(j.price).replace(".", ""))
+
+            if str(j.merchant_rating) == "0":
+                j.merchant_rating = 8.0
+
+            if j.merchant_name == "Amazon.com.tr":
+                j.merchant_rating = 10.0
+                
+            j.formula_rank = float(j.rating_count) * 0.3 + float(j.rating) * 0.2 + float(j.merchant_rating) * 0.1 - float(temp_price) * 0.4
+            
+        templist = sorted(i, key=lambda x: x.formula_rank, reverse=True)
+        matched_products_with_formula.append(templist)
+
+    products_with_no_match_with_formula = []    
+    # Use formula to order no match
+    for i in products_with_no_match:
+        temp_price = int(str(i.price).replace(".", ""))
+
+        if str(i.merchant_rating) == "0":
+            i.merchant_rating = 8.0
+
+        i.formula_rank = float(i.rating_count) * 0.3 + float(i.rating) * 0.2 + float(i.merchant_rating) * 0.1 - float(temp_price) * 0.4
+
+    products_with_no_match_with_formula = sorted(products_with_no_match, key=lambda x: x.formula_rank, reverse=True)
+        
+    no_match_amazon = []
+    no_match_trendyol = []
+
+    for i in products_with_no_match_with_formula:
+        if i.website == "Amazon":
+            no_match_amazon.append(i)
+        else:
+            no_match_trendyol.append(i)
     
-    for counter, i in enumerate(matched_products):
+    no_match_trendyol = sorted(no_match_trendyol, key=lambda x: x.formula_rank, reverse=True)
+    no_match_amazon = sorted(no_match_amazon, key=lambda x: x.formula_rank, reverse=True)
+
+
+    for counter, i in enumerate(matched_products_with_formula):
         print("Group", counter, ":\n")
         for j in i:
-            print(j.name, "\n")
+            print(j.name,"  Rank: ", j.formula_rank ,"\n")
 
     print("Products with no match: \n")
     for i in products_with_no_match:
         print(i.name, "\n")
 
     f = open("groups.txt", "wb")
-    for i in matched_products:
+    for i in matched_products_with_formula:
         for j in i:
             f.write((json.dumps(j.__dict__, ensure_ascii=False)).encode('utf8'))
             f.write("\n".encode('utf-8'))
         f.write("###\n".encode('utf-8'))
     f.close()
 
-    f = open("no_groups.txt", "wb")
-    for i in products_with_no_match:    
+    f = open("no_groups_amazon.txt", "wb")
+    for i in no_match_amazon:    
+        f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))
+        f.write("\n".encode('utf-8'))
+    f.close()
+
+    f = open("no_groups_trendyol.txt", "wb")
+    for i in no_match_trendyol:    
         f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))
         f.write("\n".encode('utf-8'))
     f.close()

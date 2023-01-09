@@ -13,9 +13,10 @@
 </head>
 <body>
   <nav>
-    <header>
-        <h1>Search and Recommendation System</h1>
-      </header>
+    <div class="logoAndHeader">
+      <img class="logo" src="/static/logo.png" alt="">
+      <h1 class="W_Header">SRS</h1>
+      </div>
       <nav>
         <form action="/search" method="post">
           <input id="searchBar" class = "search_bar" type="text"  name="query" placeholder="Search for products...">
@@ -35,12 +36,28 @@
 
   {% block groups %} {% endblock %}
  
+
+</div>
+
+
+<div class="container-fluid justify-content-between">
+  <div class="row">
+    <div class="col">
+      <h2>More Products From Amazon</h2>
+
+        {% block no_match_amazon %} {% endblock %}
+
+    </div>
+  <div class="col">
+      <h2>More Products From Trendyol</h2>
+      {% block no_match_trendyol %} {% endblock %}
+
+  </div>
+  </div>
   
 
-  <div class="card_container">
-      {% block no_match %} {% endblock %}
-  </div>
 </div>
+
     
   <script src="https://kit.fontawesome.com/2d3a71017c.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>

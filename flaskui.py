@@ -66,20 +66,29 @@ def index():
 
     
     
-    f = open("no_groups.txt", "r", encoding="utf-8")
+    f = open("no_groups_amazon.txt", "r", encoding="utf-8")
     no_groups = f.readlines()
     f.close()
 
-    not_matched = []
+    not_matched_amazon = []
     for counter, i in enumerate(no_groups):
-        if counter == len(no_groups)- 1:
-            break
-        not_matched.append(json.loads(i))
 
-    # print("From Flask\n")
-    # for counter, i in enumerate(matched):
-    #     print("Group", counter, ":\n")
-    #     for j in i:
-    #         print(j["name"], "\n")
+        not_matched_amazon.append(json.loads(i))
 
-    return render_template('_index.html', matched=matched, not_matched=not_matched)
+    for i in not_matched_amazon:
+        print(i["name"], "\n")
+
+    f = open("no_groups_trendyol.txt", "r", encoding="utf-8")
+    no_groups = f.readlines()
+    f.close()
+
+    not_matched_trendyol = []
+    for counter, i in enumerate(no_groups):
+
+        not_matched_trendyol.append(json.loads(i))
+
+    for i in not_matched_trendyol:
+        print(i["name"], "\n")
+
+
+    return render_template('_index.html', matched=matched, not_matched_amazon=not_matched_amazon, not_matched_trendyol=not_matched_trendyol)
