@@ -617,27 +617,41 @@ if __name__ == '__main__':
     no_match_trendyol = sorted(no_match_trendyol, key=lambda x: x.formula_rank, reverse=True)
     no_match_amazon = sorted(no_match_amazon, key=lambda x: x.formula_rank, reverse=True)
     group_labels = []
-    
+
     for counter, i in enumerate(matched_products_with_formula):
-        min_length_item = {"item": "", "length": 999}
-        for j in i:
+        min_length_item = {"item": "", "length": 999, "counter": 99}
+        tempgroups = i
+
+        for counter, j in enumerate(tempgroups):
             current_product = remove_punctuation(j)
             if len(current_product) < min_length_item["length"]:
                 min_length_item["length"] = len(current_product)
                 min_length_item["item"] = j
-        label_item = remove_punctuation(min_length_item["item"])
+                min_length_item["counter"] = counter
 
-        for item in i:
+        tempgroups.pop(min_length_item["counter"])
+        label_item = remove_punctuation(min_length_item["item"])
+        temp_label_item = label_item
+        for item in tempgroups:
             current_product = remove_punctuation(item)
+            print("Current Product", current_product)
+            print("Label Item", label_item)
             
-            for word in label_item:
+            to_be_removed = []
+            for index, word in enumerate(label_item):
                 if word in current_product:
-                    continue
+                    pass
                 else:
-                    label_item.remove(word)
+                    to_be_removed.append(index)
+            
+            remove_item = sorted(to_be_removed, reverse=True)
+            for i in remove_item:
+                removeditem = label_item.pop(i)
+
         label_item = [x.capitalize() for x in label_item]            
         label_item = " ".join(label_item)
         group_labels.append({"name": label_item})
+
 
         print("Group", counter, ":", label_item)
     for counter, i in enumerate(matched_products_with_formula):
