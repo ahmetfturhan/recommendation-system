@@ -38,9 +38,9 @@ class Merchant:
         self.rating = rating
         self.image = image
 
-def match_similar(trproduct, amproduct, similarity_rate):
-    first = remove_punctuation(trproduct)
-    second = remove_punctuation(amproduct)
+def match_similar(product1, product2, similarity_rate):
+    first = remove_punctuation(product1)
+    second = remove_punctuation(product2)
 
     match_counter = 0
     if len(first) > len(second):
@@ -51,8 +51,6 @@ def match_similar(trproduct, amproduct, similarity_rate):
                     break
 
         if match_counter >= int(len(second) * similarity_rate):
-            # print("Matched", amproduct.name,"|||", trproduct.name)
-            # return [amproduct, trproduct]
             return True
             
     else:
@@ -64,11 +62,9 @@ def match_similar(trproduct, amproduct, similarity_rate):
                     break
 
         if match_counter >= int(len(first) * similarity_rate):
-            # print("Matched", amproduct.name,"|||", trproduct.name)
-            # return [amproduct, trproduct]
             return True
     return False
-    # return []
+
 
 def match_exact(trproduct, amproduct):
     first = remove_punctuation(trproduct)
@@ -193,7 +189,7 @@ def trendyol(trend_product_list_main, brand, search_query):
         print("Couldn't select the brand", e)
     sleep(1)
     browser.refresh()
-    trend_products_div = WebDriverWait(browser,10).until(EC.presence_of_all_elements_located((By.XPATH, '//div[contains(@class, "p-card-wrppr")]')))
+    trend_products_div = WebDriverWait(browser,8).until(EC.presence_of_all_elements_located((By.XPATH, '//div[contains(@class, "p-card-wrppr")]')))
 
     logging.info("Total found products: %d", len(trend_products_div))
  
@@ -265,7 +261,7 @@ def trendyol(trend_product_list_main, brand, search_query):
             break
         browser.get(link)
 
-        #wait for max 10 seconds to load the page
+        #wait for max 5 seconds to load the page
         WebDriverWait(browser, 5).until(
         EC.presence_of_element_located((By.CLASS_NAME, "product-seller-line"))
     )
@@ -293,9 +289,7 @@ def trendyol(trend_product_list_main, brand, search_query):
 
         # get rating
         try:
-            # trend_product_rating_box = browser.find_element(By.XPATH, '//div[contains(@class, "product-detail-container")]')
             rating = browser.find_element(By.XPATH, '//div[contains(@class, "pr-rnr-sm-p")]/span').text
-            # print("qqqqqqqqqqqqqqqqqqqq", rating)
         except Exception as e:
             rating = "0"
             print("Couldn't get rating", e)
@@ -317,19 +311,17 @@ def trendyol(trend_product_list_main, brand, search_query):
       (end-start) * 10**3, "ms")
 
     search_query_split = search_query.lower().split(" ")
-    print(search_query_split)
+    print("Seach Query:", search_query_split)
+
     for i in trend_temp_list:
         name_split = remove_punctuation(i)
-        # print(name_split)
         is_add = True
         for j in search_query_split:
             if j in name_split:
                 continue
             else:
-                # print(j, "is not present in", i.name)
                 is_add = False
         if is_add:
-            # print("Added", i.name)
             trend_product_list_main.append(i)
         
     
@@ -359,13 +351,11 @@ def amazon(amazon_product_list_main, brand, search_query):
 
     WebDriverWait(browser, delay).until(EC.element_to_be_clickable(("xpath", '//*[@id="sp-cc-accept"]')))
 
-    # WebDriverWait(browser, delay).until(EC.presence_of_element_located(("xpath", '//*[@id="sp-cc-accept"]')))
     logging.info("Amazon Cookies Accepted")
 
     # Click on the cookies button
     browser.find_element("xpath", '//*[@id="sp-cc-accept"]').click()
 
-    # browser.implicitly_wait(2)
     WebDriverWait(browser, delay).until(EC.presence_of_element_located(("xpath", '//*[@id="brandsRefinements"]')))
 
     amazon_brand_filters = browser.find_element(By.ID, 'brandsRefinements').find_element(By.CLASS_NAME, 'a-unordered-list').get_property('children')
@@ -402,7 +392,7 @@ def amazon(amazon_product_list_main, brand, search_query):
         if price == 0:
             continue
 
-        #get rratings
+        #get ratings
         amazon_rating_box = item.find_elements(By.XPATH, './/div[@class="a-row a-size-small"]/span')
 
         if amazon_rating_box != []:
