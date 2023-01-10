@@ -3,28 +3,57 @@
 
 html{
   scroll-behavior: smooth; 
+  margin: 0;
+  padding: 0;
+  
 }
 
 body {
   font-family: 'Source Sans Pro', sans-serif;
   overflow-x: hidden;
   
+  
+  }
+  
+  .logoAndSearch{
+    display: flex;
+    flex-direction: row;
+    /* justify-content: unset; */
+    align-items: center;
+    padding-left: 200px;
+    background-color: transparent;
   }
 
+  .logoAndHeader{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* padding-right: 100px; */
+    margin-right: 220px;
+    background-color: transparent;
+    
+  }
 
   .logo{
-    width: 90px;
-    height: 90px;
+    width: 50px;
+    height: 50px;
+  }
+  .W_Header{
+    font-size: 20px;
+    cursor: default;
     
   }
+
+
   nav {
     
-    background-color: #333;
+    background-color: rgba(8, 33, 49, 0.888);
     color: white;
-    padding: 20px;
+    position: relative;
     display: flex;
     justify-content:space-between ;
     align-items: baseline;
+    padding: 5px;
   }
 
   .nav_info{
@@ -53,19 +82,40 @@ body {
   
   input[type="text"] {
     width: 400px;
-    padding: 12px 20px;
-    margin: 8px 0;
+    padding: 8px 14px;
+    margin: 3px -3px;
     box-sizing: border-box;
     border: 2px solid #ccc;
     border-radius: 4px;
   }
 
+ .Submit{
+    width: 50px;
+    height: 44px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    margin-left: -4px;
+    background-color: #fff;
+    align-items: center;
+
+ }
+ .Submit:hover{
+  background-color: rgb(18, 17, 17);
+  cursor: pointer;
+  color: white;
+ }
+
+ .Submit:hover i{
+  color: rgb(246, 130, 6);
+ }
 
 
 
 .containers{
   overflow-y: scroll;
   scroll-snap-type: y proximity;
+  
 }
 .containers::-webkit-scrollbar {
   display: none;
@@ -147,6 +197,7 @@ h2 {
   border-color: rgb(61, 60, 60);
   padding: 10px;
   height: auto;
+ 
 
 }
 
@@ -179,6 +230,7 @@ h2 {
   zoom: 1.2;
   margin-left: 20px;
   max-width: 230px;
+  object-fit: scale-down;
 }
 
 .site_header {
@@ -211,4 +263,17 @@ h2 {
   width: 20px;
   height: 25px;
   opacity: 1;
+  background-color: transparent;
+  background: transparent;
+}
+
+.buttonsAndLabel{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 30px;
+}
+.group_labels{
+  font-size: 25px;
+  font-weight: bold;
 }

@@ -3,12 +3,15 @@
 {% block groups %}
 
 {% for group in matched %}
-<h2>{{ labels[loop.index0]["name"] }}</h2>
-
 
 <div class="card_list">
+  
+  <div class="buttonsAndLabel">
   <button class="pre-btn"> <img src="/static/images/back.png" alt=""></button>
   <button class="nxt-btn"> <img src="/static/images/back.png" alt=""></button>
+  <div class="group_labels">{{ labels[loop.index0]["name"] }}</div>
+  </div>
+
 <div class="card_container">
 
 {% for item in group %}
@@ -42,7 +45,7 @@
 
 
 {% block no_match_amazon %}
-<h2 style="text-align:center;">More Products From Amazon</h2>
+<h2 style="text-align:center; font-weight: bold;">More Products From Amazon</h2>
 
 {% for item in not_matched_amazon %}
 <div class="card_box">
@@ -71,7 +74,7 @@
 {% endblock %}
 
 {% block no_match_trendyol %}
-<h2 style="text-align:center;">More Products From Trendyol</h2>
+<h2 style="text-align:center; font-weight: bold;">More Products From Trendyol</h2>
 
 {% for item in not_matched_trendyol %}
 <div class="card_box">

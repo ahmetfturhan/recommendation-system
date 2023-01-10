@@ -8,20 +8,25 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css')}}">
   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
-  <title>ISRS</title>
+  <link href='https://css.gg/search.css' rel='stylesheet'>
+  <title>S&R</title>
   
 </head>
 <body>
   <nav>
-    <div class="logoAndHeader">
-      <img class="logo" src="/static/images/logo.png" alt="">
-      <h1 class="W_Header">SRS</h1>
-      </div>
-      <nav>
-        <form action="/search" method="post">
+      <nav class="logoAndSearch">
+        <div class="logoAndHeader">
+          <img class="logo" src="/static/images/logo.png" alt="">
+          <h1 class="W_Header">S & R</h1>
+          </div>
+        <div class=""></div>
+          <form action="/search" method="post">
           <input id="searchBar" class = "search_bar" type="text"  name="query" placeholder="Search for products...">
           <input id="searchBar" class = "search_bar" type="text"  name="brand" placeholder="Enter the brand">
-          <input type="submit" value="Search">
+          <button class="Submit" type="submit"><i class="gg-search" style="margin-left: 7px;"></i></button>
+          
+          
+          
           </form>
       </nav>
     <div class="nav_info">
