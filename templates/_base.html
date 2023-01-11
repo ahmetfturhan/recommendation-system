@@ -14,21 +14,20 @@
 </head>
 <body>
   <nav>
-      <nav class="logoAndSearch">
+      
         <div class="logoAndHeader">
           <img class="logo" src="/static/images/logo.png" alt="">
           <h1 class="W_Header">S & R</h1>
           </div>
         <div class=""></div>
           <form action="/search" method="post">
-          <input id="searchBar" class = "search_bar" type="text"  name="query" placeholder="Search for products..." required>
+          
+            <input id="searchBar" class = "search_bar" type="text"  name="query" placeholder="Search for products..." required>
           <input id="searchBar" class = "search_bar" type="text"  name="brand" placeholder="Enter the brand" required>
           <button class="Submit" type="submit"><i class="gg-search" style="margin-left: 7px;"></i></button>
           
-          
-          
           </form>
-      </nav>
+    
     <div class="nav_info">
         <a style="font-family: 'Source Sans Pro', sans-serif;"href="#">Home</a> |
         <a href="#">About</a> |
@@ -60,12 +59,22 @@
   
 
 </div>
-<div class="page_footer">
-  © 2022-2023, S&R.com, Inc. veya bağlı kuruluşları
-</div>
+
+<section class="info">
+  <div>
+    
+      
+      <h1 class="info_header">Search & Recommendation</h1>
+      
+      <h3 class="warning">This project is on development stage and the current version of the application might not reflect the final results.</h3>
+      
+  </div>
+</section>
+
     
   <script src="https://kit.fontawesome.com/2d3a71017c.js" crossorigin="anonymous"></script>
   <script src="{{url_for('static', filename='script.js')}}"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 </body>
+
 </html>

@@ -702,7 +702,7 @@ if __name__ == '__main__':
             if j.merchant_name == "Amazon.com.tr":
                 j.merchant_rating = 10.0
 
-            j.formula_rank = float(temp_price) * 0.4 - float(j.rating_count) * 0.3 + float(j.rating) * 0.2 + float(j.merchant_rating) * 0.1
+            j.formula_rank =  float(j.rating_count) * 0.5 + float(j.rating) * 0.2 + float(j.merchant_rating) * 0.1 / float(temp_price) * 0.2
             
         templist = sorted(i, key=lambda x: x.formula_rank, reverse=True)
         matched_products_with_formula.append(templist)
@@ -715,7 +715,7 @@ if __name__ == '__main__':
         if str(i.merchant_rating) == "0":
             i.merchant_rating = 8.0
 
-        i.formula_rank = float(i.rating_count) * 0.3 + float(i.rating) * 0.2 + float(i.merchant_rating) * 0.1 - float(temp_price) * 0.4
+        i.formula_rank = float(i.rating_count) * 0.5 + float(i.rating) * 0.2 + float(i.merchant_rating) * 0.1 / float(temp_price) * 0.2
 
     no_match_with_formula = sorted(no_match, key=lambda x: x.formula_rank, reverse=True)
         
@@ -764,7 +764,7 @@ if __name__ == '__main__':
 
         label_item = [x.capitalize() for x in label_item]            
         label_item = " ".join(label_item)
-        group_labels.append({"name": label_item})
+        group_labels.append({"name": label_item.upper()})
     print("\n\n\n#################################################")
     for counter, i in enumerate(matched_products_with_formula):
         print("Group", counter, ":\n")
@@ -796,7 +796,10 @@ if __name__ == '__main__':
     f.close()
 
     f = open("labels.txt", "wb")
-    for i in group_labels:    
-        f.write((json.dumps(i, ensure_ascii=False)).encode('utf8'))
-        f.write("\n".encode('utf-8'))
+    if len(group_labels) == 0:
+        f.write('{"name": " "}'.encode('utf-8'))
+    else:
+        for i in group_labels: 
+            f.write((json.dumps(i, ensure_ascii=False)).encode('utf8'))
+            f.write("\n".encode('utf-8'))
     f.close()

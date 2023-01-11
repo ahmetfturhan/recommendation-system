@@ -29,12 +29,16 @@
           <p class="card-text">Times-Rated: {{ item["rating_count"] }}</p>
           <p class="card-text">Merchant: {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
           {% if item.website == "Amazon" %}
-          <div class="amazon_button">
-            <a href="{{ item["link"] }}"   target="_blank" rel="noopener noreferrer" class="btn btn-primary">Go to {{ item["website"] }}</a>
+          <div>
+            <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
+            <button class="amazon_button" type="submit"><img src="/static/images/amazon.png" alt=""></button>
+          </form>
           </div>
           {% else %}
-          <div class="trendyol_button">
-            <a href="{{ item["link"] }}"  target="_blank" rel="noopener noreferrer" class="btn btn-primary">Go to {{ item["website"] }}</a>
+          <div>
+            <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
+              <button  class="trendyol_button" type="submit"><img src="/static/images/Trendyol_online.png" alt=""></button>
+            </form>
           </div>
           {% endif %}
         </div>
@@ -52,8 +56,10 @@
 
 
 {% block no_match_amazon %}
-<h2 style="text-align:center; font-weight: bold;">More Products From Amazon</h2>
 
+  {% if not_matched_amazon | length != 0 %}
+    <h2 style="text-align:center; font-weight: bold;">More Products From Amazon</h2>
+  {% endif %}
 {% for item in not_matched_amazon %}
 <div class="card_box">
   <div class="card">
@@ -66,10 +72,19 @@
           <p class="card-text">Rating: {{ item["rating"] }}</p>
           <p class="card-text">Times-Rated: {{ item["rating_count"] }}</p>
           <p class="card-text">Merchant: {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
-          <div class="product_button">
-            <a href="{{ item["link"] }}"  target="_blank" rel="noopener noreferrer" class="btn btn-primary">Go to Product</a>
+          {% if item.website == "Amazon" %}
+          <div>
+            <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
+            <button class="amazon_button" type="submit"><img src="/static/images/amazon.png" alt=""></button>
+          </form>
           </div>
-
+          {% else %}
+          <div>
+            <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
+              <button  class="trendyol_button" type="submit"><img src="/static/images/Trendyol_online.png" alt=""></button>
+            </form>
+          </div>
+          {% endif %}
         </div>
         
     </div> 
@@ -78,10 +93,13 @@
     </div>
   </div>
   {% endfor %}
-{% endblock %}
+  
+  {% endblock %}
 
 {% block no_match_trendyol %}
-<h2 style="text-align:center; font-weight: bold;">More Products From Trendyol</h2>
+  {% if not_matched_trendyol | length != 0 %}
+    <h2 style="text-align:center; font-weight: bold;">More Products From Trendyol</h2>
+  {% endif %}
 
 {% for item in not_matched_trendyol %}
 <div class="card_box">
@@ -95,10 +113,19 @@
           <p class="card-text">Rating: {{ item["rating"] }}</p>
           <p class="card-text">Times-Rated: {{ item["rating_count"] }}</p>
           <p class="card-text">Merchant: {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
-          <div class="product_button">
-            <a href="{{ item["link"] }}"  target="_blank" rel="noopener noreferrer" class="btn btn-primary">Go to Product</a>
+          {% if item.website == "Amazon" %}
+          <div>
+            <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
+            <button class="amazon_button" type="submit"><img src="/static/images/amazon.png" alt=""></button>
+          </form>
           </div>
-
+          {% else %}
+          <div>
+            <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
+              <button  class="trendyol_button" type="submit"><img src="/static/images/Trendyol_online.png" alt=""></button>
+            </form>
+          </div>
+          {% endif %}
         </div>
         
     </div> 
