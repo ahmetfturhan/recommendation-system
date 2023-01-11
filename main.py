@@ -796,7 +796,10 @@ if __name__ == '__main__':
     f.close()
 
     f = open("labels.txt", "wb")
-    for i in group_labels:    
-        f.write((json.dumps(i, ensure_ascii=False)).encode('utf8'))
-        f.write("\n".encode('utf-8'))
+    if len(group_labels) == 0:
+        f.write('{"name": " "}'.encode('utf-8'))
+    else:
+        for i in group_labels:    
+            f.write((json.dumps(i, ensure_ascii=False)).encode('utf8'))
+            f.write("\n".encode('utf-8'))
     f.close()
