@@ -111,6 +111,8 @@ def remove_punctuation(product):
     t = t.lower()
     t = t.replace('|', '')
     t = t.translate(str.maketrans('', '', string.punctuation))
+    t = t.replace("ı", "i")
+    t = t.replace("I", "İ")
 
 
     split = t.split(" ")
@@ -167,7 +169,7 @@ def trendyol(trend_product_list_main, brand, search_query):
     
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('disable-notifications')
-    # chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--headless')
     chrome_options.add_argument('--enable-gpu')
     browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
     browser.maximize_window()
