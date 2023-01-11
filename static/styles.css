@@ -151,7 +151,7 @@ body {
   display: flex;
   width: 96%;
   height: auto;
-  overflow-x: auto;
+  overflow-x: scroll;
   overflow-y: visible;
   padding: 30px;
   overscroll-behavior-inline: contain;

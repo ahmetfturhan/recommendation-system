@@ -7,11 +7,11 @@ cardContainers.forEach((item, i) => {
     let containerWidth = containerDimensions.width;
 
     nextBtns[i].addEventListener('click', () => {
-        item.scrollLeft += containerWidth - 200;
+        item.scrollLeft += containerWidth - 150;
 
     })
 
     preBtns[i].addEventListener('click', () => {
-        item.scrollLeft -= containerWidth + 200;
+        item.scrollLeft -= containerWidth + 150;
     })
 })
