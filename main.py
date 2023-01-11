@@ -167,7 +167,7 @@ def trendyol(trend_product_list_main, brand, search_query):
     
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('disable-notifications')
-    chrome_options.add_argument('--headless')
+    # chrome_options.add_argument('--headless')
     chrome_options.add_argument('--enable-gpu')
     browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
     browser.maximize_window()
@@ -340,6 +340,7 @@ def trendyol(trend_product_list_main, brand, search_query):
             else:
                 # print(j, "is not present in", i.name)
                 is_add = False
+        is_add = True
         if is_add:
             # print("Added", i.name)
             trend_product_list_main.append(i)
@@ -478,6 +479,7 @@ def amazon(amazon_product_list_main, brand, search_query):
                 continue
             else:
                 is_add = False
+        is_add = True
         if is_add:
             amazon_product_list_main.append(i)
 
@@ -532,7 +534,7 @@ if __name__ == '__main__':
     # Trendyol Grouping
     matched_products = []
     matched_products_index = -1
-    SIMILARITY_RATE = 0.74
+    SIMILARITY_RATE = 0.85
 
     while len(trendyol_product_list_main) != 0:
 
@@ -608,81 +610,81 @@ if __name__ == '__main__':
     matched_products_with_formula = []
 
 
-    # print("before no match groups")
-    # for counter, i in enumerate(matched_products):
-    #     print("\nGroup", counter )
-    #     for j in i:
-    #         print(j.name)
+    print("before no match groups")
+    for counter, i in enumerate(matched_products):
+        print("\nGroup", counter )
+        for j in i:
+            print(j.name)
 
-    # print("\nNo Match")
-    # for i in no_match:
-    #     print(i.name, i.merchant_name)
-
-
-    # # Regroup the products with no match
-    # matched_products_index = len(matched_products) - 1
-
-    # for i in no_match:
-    #     max_product = 0
-    #     max_length = 0
-    #     max_product_index = 999
-
-    #     for counter, i in enumerate(no_match):
-    #         if len(i.name) > max_length:
-    #             max_length = len(i.name)
-    #             max_product = i
-    #             max_product_index = counter
-
-    #     matched_products_index += 1
-    #     matched_products.append([])
-
-    #     no_match.pop(max_product_index)
-    #     to_be_removed = []
-
-    #     ever_matched = False
-    #     for counter, i in enumerate(no_match):
-    #         matched = match_similar(max_product, i, 0.80)
-    #         if matched:
-    #             matched_products[matched_products_index].append(i)
-    #             to_be_removed.append(counter)
-    #             ever_matched = True
-                
-    #     remove_item = sorted(to_be_removed, reverse=True)
-
-    #     for i in remove_item:
-    #         removeditem = no_match.pop(i)
-    #         # print("removed", removeditem.name, "\n")
-
-    #     matched_products[matched_products_index].append(max_product)
+    print("\nNo Match")
+    for i in no_match:
+        print(i.name, i.merchant_name)
 
 
+    # Regroup the products with no match
+    matched_products_index = len(matched_products) - 1
+    while len(no_match) != 0: 
+        for i in no_match:
+            max_product = 0
+            max_length = 0
+            max_product_index = 999
 
+            for counter, i in enumerate(no_match):
+                if len(i.name) > max_length:
+                    max_length = len(i.name)
+                    max_product = i
+                    max_product_index = counter
 
+            matched_products_index += 1
+            matched_products.append([])
 
+            no_match.pop(max_product_index)
+            to_be_removed = []
 
-    # # Move the products with no match to a separate list 
-    # to_be_removed = []
-    # for i, group in enumerate(matched_products):
-    #     if len(group) == 1:
-    #         to_be_removed.append(i)
-    #         no_match.append(group[0])
+            ever_matched = False
+            for counter, i in enumerate(no_match):
+                matched = match_similar(max_product, i, 0.60)
+                if matched:
+                    matched_products[matched_products_index].append(i)
+                    to_be_removed.append(counter)
+                    ever_matched = True
+                    
+            remove_item = sorted(to_be_removed, reverse=True)
 
-    # for i in sorted(to_be_removed, reverse=True):
-    #     matched_products.pop(i)
+            for i in remove_item:
+                removeditem = no_match.pop(i)
+                # print("removed", removeditem.name, "\n")
+
+            matched_products[matched_products_index].append(max_product)
 
 
 
 
 
-    # print("After no match groups")
-    # for counter, i in enumerate(matched_products):
-    #     print("\nGroup", counter )
-    #     for j in i:
-    #         print(j.name)
 
-    # print("\nNo Match")
-    # for i in no_match:
-    #     print(i.name, i.merchant_name)
+    # Move the products with no match to a separate list 
+    to_be_removed = []
+    for i, group in enumerate(matched_products):
+        if len(group) == 1:
+            to_be_removed.append(i)
+            no_match.append(group[0])
+
+    for i in sorted(to_be_removed, reverse=True):
+        matched_products.pop(i)
+
+
+
+
+
+    print("After no match groups")
+    for counter, i in enumerate(matched_products):
+        print("\nGroup", counter )
+        for j in i:
+            print(j.name)
+
+    print("\nNo Match")
+    for i in no_match:
+        print(i.name, i.merchant_name)
 
 
 
