@@ -105,8 +105,8 @@ def match_exact(trproduct, amproduct):
 
     return False
 
-def remove_punctuation(trproduct):
-    t = trproduct.name
+def remove_punctuation(product):
+    t = product.name
 
     t = t.lower()
     t = t.replace('|', '')
@@ -114,7 +114,18 @@ def remove_punctuation(trproduct):
 
 
     split = t.split(" ")
-
+    to_be_removed = []
+    for counter, word in enumerate(split):
+        if word == "gb":
+            to_be_removed.append(counter)
+            split[counter-1] = split[counter-1] + "gb"
+        elif word == "tb":
+            to_be_removed.append(counter)
+            split[counter-1] = split[counter-1] + "tb"
+    to_be_removed = sorted(to_be_removed, reverse=True)
+    for i in to_be_removed:
+        split.pop(i)
+        
     #Remove empty chars
     split = remove_items(split, "")
     return split
@@ -161,7 +172,7 @@ def trendyol(trend_product_list_main, brand, search_query):
     browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
     browser.maximize_window()
     
-    browser.get('https://www.trendyol.com/sr?q=' + search_query)
+    browser.get('https://www.trendyol.com/sr?q=' + brand + " " + search_query)
     delay = 5
 
     myElem = WebDriverWait(browser, delay).until(EC.presence_of_element_located(("xpath", "//*[@id='onetrust-accept-btn-handler']")))
@@ -189,8 +200,9 @@ def trendyol(trend_product_list_main, brand, search_query):
                     i.find_element("xpath", './/div[@class="chckbox"]').click()
                     break
             print("trendyol selected brand")
+
     except Exception as e:
-        print("Couldn't select the brand", e)
+        print("AAAAAAAAAAACouldn't select the brand", e)
     sleep(1)
     browser.refresh()
     trend_products_div = WebDriverWait(browser,10).until(EC.presence_of_all_elements_located((By.XPATH, '//div[contains(@class, "p-card-wrppr")]')))
@@ -354,7 +366,7 @@ def amazon(amazon_product_list_main, brand, search_query):
     browser.maximize_window()
 
 
-    browser.get('https://www.amazon.com.tr/s?k=' + search_query)
+    browser.get('https://www.amazon.com.tr/s?k=' + brand + " " + search_query)
     delay = 5
 
     WebDriverWait(browser, delay).until(EC.element_to_be_clickable(("xpath", '//*[@id="sp-cc-accept"]')))
@@ -428,10 +440,10 @@ def amazon(amazon_product_list_main, brand, search_query):
             break
         browser.get(link)
 
-        WebDriverWait(browser, delay).until(EC.presence_of_all_elements_located((By.XPATH, '//div[@id="merchant-info"]')))
 
         #Get merchant info
         try:
+            WebDriverWait(browser, delay).until(EC.presence_of_all_elements_located((By.XPATH, '//div[@id="merchant-info"]')))
             merchant_info = browser.find_elements(By.XPATH, './/div[@id="merchant-info"]/a')
 
             if len(merchant_info) != 0:
@@ -485,6 +497,7 @@ if __name__ == '__main__':
     search_query = args.arg1.replace("+", " ")
     brand = args.arg2.replace("+", " ")
 
+
     print("Search query: ", search_query)
     print("Brand:", brand)
 
@@ -501,6 +514,8 @@ if __name__ == '__main__':
     trendyol_process.join()
     amazon_process.join()
 
+    trendyol_product_list_main = sorted(trendyol_product_list_main, key=lambda x: len(x.name), reverse=True)
+    amazon_product_list_main = sorted(amazon_product_list_main, key=lambda x: len(x.name), reverse=True)
     f = open("amazon.txt", "wb")
     for i in amazon_product_list_main:
         f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))
@@ -517,7 +532,7 @@ if __name__ == '__main__':
     # Trendyol Grouping
     matched_products = []
     matched_products_index = -1
-    SIMILARITY_RATE = 0.80
+    SIMILARITY_RATE = 0.74
 
     while len(trendyol_product_list_main) != 0:
 
@@ -530,6 +545,7 @@ if __name__ == '__main__':
                 max_length = len(i.name)
                 max_product = i
                 max_product_index = counter
+        print("GROUPING BASED ON", max_product.name, "\n")
 
         matched_products_index += 1
         matched_products.append([])
@@ -592,81 +608,81 @@ if __name__ == '__main__':
     matched_products_with_formula = []
 
 
-    print("before no match groups")
-    for counter, i in enumerate(matched_products):
-        print("\nGroup", counter )
-        for j in i:
-            print(j.name)
+    # print("before no match groups")
+    # for counter, i in enumerate(matched_products):
+    #     print("\nGroup", counter )
+    #     for j in i:
+    #         print(j.name)
 
-    print("\nNo Match")
-    for i in no_match:
-        print(i.name, i.merchant_name)
+    # print("\nNo Match")
+    # for i in no_match:
+    #     print(i.name, i.merchant_name)
 
 
-    # Regroup the products with no match
-    matched_products_index = len(matched_products) - 1
+    # # Regroup the products with no match
+    # matched_products_index = len(matched_products) - 1
 
-    for i in no_match:
-        max_product = 0
-        max_length = 0
-        max_product_index = 999
+    # for i in no_match:
+    #     max_product = 0
+    #     max_length = 0
+    #     max_product_index = 999
 
-        for counter, i in enumerate(no_match):
-            if len(i.name) > max_length:
-                max_length = len(i.name)
-                max_product = i
-                max_product_index = counter
+    #     for counter, i in enumerate(no_match):
+    #         if len(i.name) > max_length:
+    #             max_length = len(i.name)
+    #             max_product = i
+    #             max_product_index = counter
 
-        matched_products_index += 1
-        matched_products.append([])
+    #     matched_products_index += 1
+    #     matched_products.append([])
 
-        no_match.pop(max_product_index)
-        to_be_removed = []
+    #     no_match.pop(max_product_index)
+    #     to_be_removed = []
 
-        ever_matched = False
-        for counter, i in enumerate(no_match):
-            matched = match_similar(max_product, i, 0.70)
-            if matched:
-                matched_products[matched_products_index].append(i)
-                to_be_removed.append(counter)
-                ever_matched = True
+    #     ever_matched = False
+    #     for counter, i in enumerate(no_match):
+    #         matched = match_similar(max_product, i, 0.80)
+    #         if matched:
+    #             matched_products[matched_products_index].append(i)
+    #             to_be_removed.append(counter)
+    #             ever_matched = True
                 
-        remove_item = sorted(to_be_removed, reverse=True)
+    #     remove_item = sorted(to_be_removed, reverse=True)
 
-        for i in remove_item:
-            removeditem = no_match.pop(i)
-            # print("removed", removeditem.name, "\n")
+    #     for i in remove_item:
+    #         removeditem = no_match.pop(i)
+    #         # print("removed", removeditem.name, "\n")
 
-        matched_products[matched_products_index].append(max_product)
-
-
-
-
-
-
-    # Move the products with no match to a separate list 
-    to_be_removed = []
-    for i, group in enumerate(matched_products):
-        if len(group) == 1:
-            to_be_removed.append(i)
-            no_match.append(group[0])
-
-    for i in sorted(to_be_removed, reverse=True):
-        matched_products.pop(i)
+    #     matched_products[matched_products_index].append(max_product)
 
 
 
 
 
-    print("After no match groups")
-    for counter, i in enumerate(matched_products):
-        print("\nGroup", counter )
-        for j in i:
-            print(j.name)
 
-    print("\nNo Match")
-    for i in no_match:
-        print(i.name, i.merchant_name)
+    # # Move the products with no match to a separate list 
+    # to_be_removed = []
+    # for i, group in enumerate(matched_products):
+    #     if len(group) == 1:
+    #         to_be_removed.append(i)
+    #         no_match.append(group[0])
+
+    # for i in sorted(to_be_removed, reverse=True):
+    #     matched_products.pop(i)
+
+
+
+
+
+    # print("After no match groups")
+    # for counter, i in enumerate(matched_products):
+    #     print("\nGroup", counter )
+    #     for j in i:
+    #         print(j.name)
+
+    # print("\nNo Match")
+    # for i in no_match:
+    #     print(i.name, i.merchant_name)
 
 
 
