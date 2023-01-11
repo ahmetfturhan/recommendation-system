@@ -38,9 +38,9 @@ class Merchant:
         self.rating = rating
         self.image = image
 
-def match_similar(product1, product2, similarity_rate):
-    first = remove_punctuation(product1)
-    second = remove_punctuation(product2)
+def match_similar(trproduct, amproduct, similarity_rate):
+    first = remove_punctuation(trproduct)
+    second = remove_punctuation(amproduct)
 
     match_counter = 0
     if len(first) > len(second):
@@ -51,6 +51,8 @@ def match_similar(product1, product2, similarity_rate):
                     break
 
         if match_counter >= int(len(second) * similarity_rate):
+            # print("Matched", amproduct.name,"|||", trproduct.name)
+            # return [amproduct, trproduct]
             return True
             
     else:
@@ -62,9 +64,11 @@ def match_similar(product1, product2, similarity_rate):
                     break
 
         if match_counter >= int(len(first) * similarity_rate):
+            # print("Matched", amproduct.name,"|||", trproduct.name)
+            # return [amproduct, trproduct]
             return True
     return False
-
+    # return []
 
 def match_exact(trproduct, amproduct):
     first = remove_punctuation(trproduct)
@@ -101,8 +105,8 @@ def match_exact(trproduct, amproduct):
 
     return False
 
-def remove_punctuation(trproduct):
-    t = trproduct.name
+def remove_punctuation(product):
+    t = product.name
 
     t = t.lower()
     t = t.replace('|', '')
@@ -110,7 +114,18 @@ def remove_punctuation(trproduct):
 
 
     split = t.split(" ")
-
+    to_be_removed = []
+    for counter, word in enumerate(split):
+        if word == "gb":
+            to_be_removed.append(counter)
+            split[counter-1] = split[counter-1] + "gb"
+        elif word == "tb":
+            to_be_removed.append(counter)
+            split[counter-1] = split[counter-1] + "tb"
+    to_be_removed = sorted(to_be_removed, reverse=True)
+    for i in to_be_removed:
+        split.pop(i)
+        
     #Remove empty chars
     split = remove_items(split, "")
     return split
@@ -157,7 +172,7 @@ def trendyol(trend_product_list_main, brand, search_query):
     browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
     browser.maximize_window()
     
-    browser.get('https://www.trendyol.com/sr?q=' + search_query)
+    browser.get('https://www.trendyol.com/sr?q=' + brand + " " + search_query)
     delay = 5
 
     myElem = WebDriverWait(browser, delay).until(EC.presence_of_element_located(("xpath", "//*[@id='onetrust-accept-btn-handler']")))
@@ -185,11 +200,12 @@ def trendyol(trend_product_list_main, brand, search_query):
                     i.find_element("xpath", './/div[@class="chckbox"]').click()
                     break
             print("trendyol selected brand")
+
     except Exception as e:
-        print("Couldn't select the brand", e)
+        print("AAAAAAAAAAACouldn't select the brand", e)
     sleep(1)
     browser.refresh()
-    trend_products_div = WebDriverWait(browser,8).until(EC.presence_of_all_elements_located((By.XPATH, '//div[contains(@class, "p-card-wrppr")]')))
+    trend_products_div = WebDriverWait(browser,10).until(EC.presence_of_all_elements_located((By.XPATH, '//div[contains(@class, "p-card-wrppr")]')))
 
     logging.info("Total found products: %d", len(trend_products_div))
  
@@ -261,7 +277,7 @@ def trendyol(trend_product_list_main, brand, search_query):
             break
         browser.get(link)
 
-        #wait for max 5 seconds to load the page
+        #wait for max 10 seconds to load the page
         WebDriverWait(browser, 5).until(
         EC.presence_of_element_located((By.CLASS_NAME, "product-seller-line"))
     )
@@ -289,7 +305,9 @@ def trendyol(trend_product_list_main, brand, search_query):
 
         # get rating
         try:
+            # trend_product_rating_box = browser.find_element(By.XPATH, '//div[contains(@class, "product-detail-container")]')
             rating = browser.find_element(By.XPATH, '//div[contains(@class, "pr-rnr-sm-p")]/span').text
+            # print("qqqqqqqqqqqqqqqqqqqq", rating)
         except Exception as e:
             rating = "0"
             print("Couldn't get rating", e)
@@ -311,17 +329,19 @@ def trendyol(trend_product_list_main, brand, search_query):
       (end-start) * 10**3, "ms")
 
     search_query_split = search_query.lower().split(" ")
-    print("Seach Query:", search_query_split)
-
+    print(search_query_split)
     for i in trend_temp_list:
         name_split = remove_punctuation(i)
+        # print(name_split)
         is_add = True
         for j in search_query_split:
             if j in name_split:
                 continue
             else:
+                # print(j, "is not present in", i.name)
                 is_add = False
         if is_add:
+            # print("Added", i.name)
             trend_product_list_main.append(i)
         
     
@@ -346,16 +366,18 @@ def amazon(amazon_product_list_main, brand, search_query):
     browser.maximize_window()
 
 
-    browser.get('https://www.amazon.com.tr/s?k=' + search_query)
+    browser.get('https://www.amazon.com.tr/s?k=' + brand + " " + search_query)
     delay = 5
 
     WebDriverWait(browser, delay).until(EC.element_to_be_clickable(("xpath", '//*[@id="sp-cc-accept"]')))
 
+    # WebDriverWait(browser, delay).until(EC.presence_of_element_located(("xpath", '//*[@id="sp-cc-accept"]')))
     logging.info("Amazon Cookies Accepted")
 
     # Click on the cookies button
     browser.find_element("xpath", '//*[@id="sp-cc-accept"]').click()
 
+    # browser.implicitly_wait(2)
     WebDriverWait(browser, delay).until(EC.presence_of_element_located(("xpath", '//*[@id="brandsRefinements"]')))
 
     amazon_brand_filters = browser.find_element(By.ID, 'brandsRefinements').find_element(By.CLASS_NAME, 'a-unordered-list').get_property('children')
@@ -392,7 +414,7 @@ def amazon(amazon_product_list_main, brand, search_query):
         if price == 0:
             continue
 
-        #get ratings
+        #get rratings
         amazon_rating_box = item.find_elements(By.XPATH, './/div[@class="a-row a-size-small"]/span')
 
         if amazon_rating_box != []:
@@ -418,10 +440,10 @@ def amazon(amazon_product_list_main, brand, search_query):
             break
         browser.get(link)
 
-        WebDriverWait(browser, delay).until(EC.presence_of_all_elements_located((By.XPATH, '//div[@id="merchant-info"]')))
 
         #Get merchant info
         try:
+            WebDriverWait(browser, delay).until(EC.presence_of_all_elements_located((By.XPATH, '//div[@id="merchant-info"]')))
             merchant_info = browser.find_elements(By.XPATH, './/div[@id="merchant-info"]/a')
 
             if len(merchant_info) != 0:
@@ -475,6 +497,7 @@ if __name__ == '__main__':
     search_query = args.arg1.replace("+", " ")
     brand = args.arg2.replace("+", " ")
 
+
     print("Search query: ", search_query)
     print("Brand:", brand)
 
@@ -491,6 +514,8 @@ if __name__ == '__main__':
     trendyol_process.join()
     amazon_process.join()
 
+    trendyol_product_list_main = sorted(trendyol_product_list_main, key=lambda x: len(x.name), reverse=True)
+    amazon_product_list_main = sorted(amazon_product_list_main, key=lambda x: len(x.name), reverse=True)
     f = open("amazon.txt", "wb")
     for i in amazon_product_list_main:
         f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))
@@ -514,11 +539,13 @@ if __name__ == '__main__':
         max_product = 0
         max_length = 0
         max_product_index = 999
+        
         for counter, i in enumerate(trendyol_product_list_main):
             if len(i.name) > max_length:
                 max_length = len(i.name)
                 max_product = i
                 max_product_index = counter
+        print("GROUPING BASED ON", max_product.name, "\n")
 
         matched_products_index += 1
         matched_products.append([])
@@ -540,13 +567,14 @@ if __name__ == '__main__':
             removeditem = trendyol_product_list_main.pop(i)
             # print("removed", removeditem.name, "\n")
 
-        if not ever_matched:
-            matched_products[matched_products_index].append(max_product)
-            
-        else:
-            matched_products[matched_products_index].append(max_product)
+        matched_products[matched_products_index].append(max_product)
 
-    
+    # for counter, i in enumerate(matched_products):
+    #     print("Group", counter )
+    #     for j in i:
+    #         print(j.name)
+
+
     # Match amazon products with trendyol groups 
     for i in range(0, len(matched_products)):
         max_product_of_current_group = matched_products[i][-1]
@@ -559,6 +587,8 @@ if __name__ == '__main__':
 
         for k in sorted(to_be_removed, reverse=True):
             amazon_product_list_main.pop(k)
+
+
 
     # Move the products with no match to a separate list 
     to_be_removed = []
@@ -577,6 +607,90 @@ if __name__ == '__main__':
 
     matched_products_with_formula = []
 
+
+    # print("before no match groups")
+    # for counter, i in enumerate(matched_products):
+    #     print("\nGroup", counter )
+    #     for j in i:
+    #         print(j.name)
+
+    # print("\nNo Match")
+    # for i in no_match:
+    #     print(i.name, i.merchant_name)
+
+
+    # # Regroup the products with no match
+    # matched_products_index = len(matched_products) - 1
+
+    # for i in no_match:
+    #     max_product = 0
+    #     max_length = 0
+    #     max_product_index = 999
+
+    #     for counter, i in enumerate(no_match):
+    #         if len(i.name) > max_length:
+    #             max_length = len(i.name)
+    #             max_product = i
+    #             max_product_index = counter
+
+    #     matched_products_index += 1
+    #     matched_products.append([])
+
+    #     no_match.pop(max_product_index)
+    #     to_be_removed = []
+
+    #     ever_matched = False
+    #     for counter, i in enumerate(no_match):
+    #         matched = match_similar(max_product, i, 0.80)
+    #         if matched:
+    #             matched_products[matched_products_index].append(i)
+    #             to_be_removed.append(counter)
+    #             ever_matched = True
+                
+    #     remove_item = sorted(to_be_removed, reverse=True)
+
+    #     for i in remove_item:
+    #         removeditem = no_match.pop(i)
+    #         # print("removed", removeditem.name, "\n")
+
+    #     matched_products[matched_products_index].append(max_product)
+
+
+
+
+
+
+    # # Move the products with no match to a separate list 
+    # to_be_removed = []
+    # for i, group in enumerate(matched_products):
+    #     if len(group) == 1:
+    #         to_be_removed.append(i)
+    #         no_match.append(group[0])
+
+    # for i in sorted(to_be_removed, reverse=True):
+    #     matched_products.pop(i)
+
+
+
+
+
+    # print("After no match groups")
+    # for counter, i in enumerate(matched_products):
+    #     print("\nGroup", counter )
+    #     for j in i:
+    #         print(j.name)
+
+    # print("\nNo Match")
+    # for i in no_match:
+    #     print(i.name, i.merchant_name)
+
+
+
+
+
+
+    matched_products_with_formula = []
+
     # Use the formula to order items
     for i in matched_products:
         for j in i:
@@ -588,7 +702,7 @@ if __name__ == '__main__':
             if j.merchant_name == "Amazon.com.tr":
                 j.merchant_rating = 10.0
 
-            j.formula_rank = float(j.rating_count) * 0.3 + float(j.rating) * 0.2 + float(j.merchant_rating) * 0.1 - float(temp_price) * 0.4
+            j.formula_rank = float(temp_price) * 0.4 - float(j.rating_count) * 0.3 + float(j.rating) * 0.2 + float(j.merchant_rating) * 0.1
             
         templist = sorted(i, key=lambda x: x.formula_rank, reverse=True)
         matched_products_with_formula.append(templist)
@@ -613,17 +727,18 @@ if __name__ == '__main__':
             no_match_amazon.append(i)
         else:
             no_match_trendyol.append(i)
-    
+
     no_match_trendyol = sorted(no_match_trendyol, key=lambda x: x.formula_rank, reverse=True)
     no_match_amazon = sorted(no_match_amazon, key=lambda x: x.formula_rank, reverse=True)
     group_labels = []
 
     for counter, i in enumerate(matched_products_with_formula):
         min_length_item = {"item": "", "length": 999, "counter": 99}
-        tempgroups = i
+        tempgroups = [z for z in i]
 
         for counter, j in enumerate(tempgroups):
             current_product = remove_punctuation(j)
+            # print(current_product)
             if len(current_product) < min_length_item["length"]:
                 min_length_item["length"] = len(current_product)
                 min_length_item["item"] = j
@@ -634,8 +749,7 @@ if __name__ == '__main__':
         temp_label_item = label_item
         for item in tempgroups:
             current_product = remove_punctuation(item)
-            print("Current Product", current_product)
-            print("Label Item", label_item)
+
             
             to_be_removed = []
             for index, word in enumerate(label_item):
@@ -651,9 +765,7 @@ if __name__ == '__main__':
         label_item = [x.capitalize() for x in label_item]            
         label_item = " ".join(label_item)
         group_labels.append({"name": label_item})
-
-
-        print("Group", counter, ":", label_item)
+    print("\n\n\n#################################################")
     for counter, i in enumerate(matched_products_with_formula):
         print("Group", counter, ":\n")
         for j in i:

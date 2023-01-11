@@ -15,6 +15,7 @@
 <div class="card_container">
 
 {% for item in group %}
+  
 
 <div class="card_box">
   <div class="card">
@@ -27,9 +28,15 @@
           <p class="card-text">Rating: {{ item["rating"] }}</p>
           <p class="card-text">Times-Rated: {{ item["rating_count"] }}</p>
           <p class="card-text">Merchant: {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
-          <div class="product_button">
-            <a href="{{ item["link"] }}"  target="_blank" rel="noopener noreferrer" class="btn btn-primary">Go to Product</a>
+          {% if item.website == "Amazon" %}
+          <div class="amazon_button">
+            <a href="{{ item["link"] }}"   target="_blank" rel="noopener noreferrer" class="btn btn-primary">Go to {{ item["website"] }}</a>
           </div>
+          {% else %}
+          <div class="trendyol_button">
+            <a href="{{ item["link"] }}"  target="_blank" rel="noopener noreferrer" class="btn btn-primary">Go to {{ item["website"] }}</a>
+          </div>
+          {% endif %}
         </div>
         
     </div> 
