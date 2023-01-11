@@ -22,12 +22,12 @@
     <div class="image_and_info">
       <img class="product_image" src="{{ item["image"] }}"  alt="...">
       
-        <div class="product_info">
+        <div class="product_info" style="font-size: 22px;">
           <p class="card-title">{{ item["name"] }}</p>
-          <p class="card-text">Price: {{ item["price"] }} TL</p>
-          <p class="card-text">Rating: {{ item["rating"] }}</p>
-          <p class="card-text">Times-Rated: {{ item["rating_count"] }}</p>
-          <p class="card-text">Merchant: {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
+          <p class="card-text"><img class="price" src="/static/images/price.png" alt=""> : {{ item["price"] }} TL</p>
+          <p class="card-text"><img class="rate" src="/static/images/rate.png" alt=""> : {{ item["rating"] }}</p>
+          <p class="card-text"><img class="rating-count" src="/static/images/rating-count.png" alt="">: {{ item["rating_count"] }}</p>
+          <p class="card-text"><img class="shipped" src="/static/images/shipped.png" alt=""> : {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
           {% if item.website == "Amazon" %}
           <div>
             <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
@@ -66,12 +66,12 @@
     <div class="image_and_info">
       <img class="product_image" src="{{ item["image"] }}"  alt="...">
       
-        <div class="product_info">
+        <div class="product_info" style="font-size: 22px;">
           <p class="card-title">{{ item["name"] }}</p>
-          <p class="card-text">Price: {{ item["price"] }} TL</p>
-          <p class="card-text">Rating: {{ item["rating"] }}</p>
-          <p class="card-text">Times-Rated: {{ item["rating_count"] }}</p>
-          <p class="card-text">Merchant: {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
+          <p class="card-text"><img class="price" src="/static/images/price.png" alt=""> : {{ item["price"] }} TL</p>
+          <p class="card-text"><img class="rate" src="/static/images/rate.png" alt=""> : {{ item["rating"] }}</p>
+          <p class="card-text"><img class="rating-count" src="/static/images/rating-count.png" alt="">: {{ item["rating_count"] }}</p>
+          <p class="card-text"><img class="shipped" src="/static/images/shipped.png" alt=""> : {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
           {% if item.website == "Amazon" %}
           <div>
             <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
@@ -107,12 +107,12 @@
     <div class="image_and_info">
       <img class="product_image" src="{{ item["image"] }}"  alt="...">
       
-        <div class="product_info">
+        <div class="product_info" style="font-size: 22px;">
           <p class="card-title">{{ item["name"] }}</p>
-          <p class="card-text">Price: {{ item["price"] }} TL</p>
-          <p class="card-text">Rating: {{ item["rating"] }}</p>
-          <p class="card-text">Times-Rated: {{ item["rating_count"] }}</p>
-          <p class="card-text">Merchant: {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
+          <p class="card-text"><img class="price" src="/static/images/price.png" alt="">   : {{ item["price"] }} TL</p>
+          <p class="card-text"><img class="rate" src="/static/images/rate.png" alt="">   : {{ item["rating"] }}</p>
+          <p class="card-text"><img class="rating-count" src="/static/images/rating-count.png" alt="">   : {{ item["rating_count"] }}</p>
+          <p class="card-text"><img class="shipped" src="/static/images/shipped.png" alt="">   : {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
           {% if item.website == "Amazon" %}
           <div>
             <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">

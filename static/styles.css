@@ -151,7 +151,7 @@ body {
   display: flex;
   width: 96%;
   height: auto;
-  overflow-x: scroll;
+  overflow-x: auto;
   overflow-y: visible;
   padding: 30px;
   overscroll-behavior-inline: contain;
@@ -238,7 +238,7 @@ h2 {
 }
 .amazon_button{
   
-  margin-top: 30px;
+  margin-top: 8px;
   margin-bottom: 10px;
   border-radius: 7px;
   width: 150px;
@@ -254,7 +254,7 @@ h2 {
 
 
 .trendyol_button{
-  margin-top: 30px;
+  margin-top: 8px;
   margin-bottom: 10px;
   border-radius: 7px;
   width: 150px;
@@ -348,4 +348,28 @@ h2 {
   margin-top: 20px;
   position: relative;
 
+}
+
+
+.price{
+  
+  height: 33px;
+  width: 33px;
+}
+
+.rate{
+  
+  height: 45px;
+  width: 45px;
+}
+
+.shipped{
+  
+  height: 38px;
+  width: 51px;
+}
+
+.rating-count{
+  height: 39px;
+  width: 39px;
 }
