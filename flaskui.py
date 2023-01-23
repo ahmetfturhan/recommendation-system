@@ -5,6 +5,8 @@ import json
 
 app = Flask(__name__)
 
+DATA_PREFIX = "./data/"
+
 class Merchant:
     def __init__(self, name, rating):
         self.name = name
@@ -31,7 +33,7 @@ def index():
     subprocess.call(f'python main.py --arg1 {search_query} --arg2 {brand}', shell=True)
     #subprocess.call(["python", "main.py", "--arg1", search_query, "--arg2", brand])
 
-    f = open("amazon.txt", "r", encoding="utf-8")
+    f = open(DATA_PREFIX + "amazon.txt", "r", encoding="utf-8")
     amazontxt = f.readlines()
     f.close()
 
@@ -41,7 +43,7 @@ def index():
         aproducts.append(jsonstr)
 
 
-    f = open("trendyol.txt", "r", encoding="utf-8")
+    f = open(DATA_PREFIX + "trendyol.txt", "r", encoding="utf-8")
     trendyoltxt = f.readlines()
     f.close()
 
@@ -49,7 +51,7 @@ def index():
     for i in trendyoltxt:
         tproducts.append(json.loads(i))
 
-    f = open("groups.txt", "r", encoding="utf-8")
+    f = open(DATA_PREFIX + "groups.txt", "r", encoding="utf-8")
     groups = f.readlines()
     f.close()
 
@@ -66,7 +68,7 @@ def index():
 
     
     
-    f = open("no_groups_amazon.txt", "r", encoding="utf-8")
+    f = open(DATA_PREFIX + "no_groups_amazon.txt", "r", encoding="utf-8")
     no_groups = f.readlines()
     f.close()
 
@@ -78,7 +80,7 @@ def index():
     for i in not_matched_amazon:
         print(i["name"], "\n")
 
-    f = open("no_groups_trendyol.txt", "r", encoding="utf-8")
+    f = open(DATA_PREFIX + "no_groups_trendyol.txt", "r", encoding="utf-8")
     no_groups = f.readlines()
     f.close()
 
@@ -90,7 +92,7 @@ def index():
     for i in not_matched_trendyol:
         print(i["name"], "\n")
 
-    f = open("labels.txt", "r", encoding="utf-8")
+    f = open(DATA_PREFIX + "labels.txt", "r", encoding="utf-8")
     no_groups = f.readlines()
     f.close()
 

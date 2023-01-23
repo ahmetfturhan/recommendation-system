@@ -1,5 +1,7 @@
-import logging
 import sys
+sys.dont_write_bytecode = True
+
+import logging
 import selenium as sl
 import multiprocessing as mp
 from selenium import webdriver
@@ -16,6 +18,7 @@ import time
 import json
 import argparse
 import string
+import chromedriver_binary
 
 
 class Product:
@@ -169,9 +172,10 @@ def trendyol(trend_product_list_main, brand, search_query):
     
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('disable-notifications')
-    # chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--headless')
     chrome_options.add_argument('--enable-gpu')
-    browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
+    chrome_options.add_argument('--no-sandbox')
+    browser = webdriver.Chrome(options=chrome_options)
     browser.maximize_window()
     
     browser.get('https://www.trendyol.com/sr?q=' + brand + " " + search_query)
@@ -358,14 +362,14 @@ def amazon(amazon_product_list_main, brand, search_query):
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--enable-gpu')
     chrome_options.add_argument('disable-notifications')
+    chrome_options.add_argument('--no-sandbox')
 
-    service_obj = Service(rf"C:\Users\ahmet\AppData\Local\Programs\Python\Python39\chromedriver.exe")
 
     chrome_options.add_experimental_option("useAutomationExtension", False)
     chrome_options.add_experimental_option("excludeSwitches",["enable-automation"])
 
 
-    browser = webdriver.Chrome('chromedriver.exe', options=chrome_options, service=service_obj)
+    browser = webdriver.Chrome(options=chrome_options)
     browser.maximize_window()
 
 
@@ -490,6 +494,8 @@ def amazon(amazon_product_list_main, brand, search_query):
 
 
 if __name__ == '__main__':
+    
+    DATA_PREFIX = "./data/"
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--arg1', type=str, help='Description of argument 1')
@@ -520,14 +526,14 @@ if __name__ == '__main__':
 
     trendyol_product_list_main = sorted(trendyol_product_list_main, key=lambda x: len(x.name), reverse=True)
     amazon_product_list_main = sorted(amazon_product_list_main, key=lambda x: len(x.name), reverse=True)
-    f = open("amazon.txt", "wb")
+    f = open(DATA_PREFIX + "amazon.txt", "wb")
     for i in amazon_product_list_main:
         f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))
         f.write("\n".encode('utf-8'))
     f.close()
 
     
-    f = open("trendyol.txt", "wb")
+    f = open(DATA_PREFIX + "trendyol.txt", "wb")
     for i in trendyol_product_list_main:
         f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))
         f.write("\n".encode('utf-8'))
@@ -660,10 +666,6 @@ if __name__ == '__main__':
             matched_products[matched_products_index].append(max_product)
 
 
-
-
-
-
     # Move the products with no match to a separate list 
     to_be_removed = []
     for i, group in enumerate(matched_products):
@@ -675,9 +677,6 @@ if __name__ == '__main__':
         matched_products.pop(i)
 
 
-
-
-
     print("After no match groups")
     for counter, i in enumerate(matched_products):
         print("\nGroup", counter )
@@ -687,10 +686,6 @@ if __name__ == '__main__':
     print("\nNo Match")
     for i in no_match:
         print(i.name, i.merchant_name)
-
-
-
-
 
 
     matched_products_with_formula = []
@@ -779,7 +774,7 @@ if __name__ == '__main__':
     for i in no_match:
         print(i.name, "\n")
 
-    f = open("groups.txt", "wb")
+    f = open(DATA_PREFIX + "groups.txt", "wb")
     for i in matched_products_with_formula:
         for j in i:
             f.write((json.dumps(j.__dict__, ensure_ascii=False)).encode('utf8'))
@@ -787,19 +782,19 @@ if __name__ == '__main__':
         f.write("###\n".encode('utf-8'))
     f.close()
 
-    f = open("no_groups_amazon.txt", "wb")
+    f = open(DATA_PREFIX + "no_groups_amazon.txt", "wb")
     for i in no_match_amazon:    
         f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))
         f.write("\n".encode('utf-8'))
     f.close()
 
-    f = open("no_groups_trendyol.txt", "wb")
+    f = open(DATA_PREFIX + "no_groups_trendyol.txt", "wb")
     for i in no_match_trendyol:    
         f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))
         f.write("\n".encode('utf-8'))
     f.close()
 
-    f = open("labels.txt", "wb")
+    f = open(DATA_PREFIX + "labels.txt", "wb")
     if len(group_labels) == 0:
         f.write('{"name": " "}'.encode('utf-8'))
     else:
