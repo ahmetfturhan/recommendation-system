@@ -526,6 +526,8 @@ if __name__ == '__main__':
 
     trendyol_product_list_main = sorted(trendyol_product_list_main, key=lambda x: len(x.name), reverse=True)
     amazon_product_list_main = sorted(amazon_product_list_main, key=lambda x: len(x.name), reverse=True)
+
+    
     f = open(DATA_PREFIX + "amazon.txt", "wb")
     for i in amazon_product_list_main:
         f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))

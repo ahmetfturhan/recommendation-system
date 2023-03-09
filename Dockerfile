@@ -5,12 +5,7 @@ WORKDIR /app
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
-# RUN python -m venv env
-
-# ENV PATH="/app/env/bin:$PATH"
-
-# RUN . env/bin/activate
-RUN apt-get update && apt-get install wget unzip zip -y
+RUN apt-get update && apt-get install wget unzip zip -y && apt-get clean
 
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 RUN dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
@@ -19,17 +14,13 @@ COPY requirements.txt requirements.txt
 
 RUN wget -O LATEST_RELEASE chromedriver.storage.googleapis.com/LATEST_RELEASE && export latest=$(cat LATEST_RELEASE) && sed -i "s/LTS/$latest/g" requirements.txt  
 
-RUN pip install -r requirements.txt
+RUN rm google-chrome-stable_current_amd64.deb
 
-# COPY chromedriver.exe /usr/local/bin/chromedriver.exe
+RUN pip install -r requirements.txt
 
 COPY . /app/
 
-RUN export PATH=$PATH:`chromedriver-path`
-
-# ENTRYPOINT ["/bin/sleep","3600"]
-
-CMD [ "python", "-m" , "flask", "--app", "./flask-docker/flaskui", "run", "--host=0.0.0.0"]
+CMD [ "python", "-m" , "flask", "--app", "flaskui", "run", "--host=0.0.0.0"]
 
 # CMD [ "python3", "-m" , "flask", "-app", "flaskui", "run"]
 
@@ -38,17 +29,26 @@ CMD [ "python", "-m" , "flask", "--app", "./flask-docker/flaskui", "run", "--hos
 # ENV PYTHONUNBUFFERED=1
 # ENV PYTHONDONTWRITEBYTECODE=1
 
-# WORKDIR /flask-docker
+# WORKDIR /app
 
-# COPY --from=build /flask-docker /flask-docker
+# # RUN apt-get update && apt-get clean
 
-# COPY . .
+# RUN apt-get install -y libglib2.0-0 libnss3 libgconf-2-4 libfontconfig1 && apt-get clean
+
+# COPY --from=build /app /app
+
+# RUN dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
+
+# RUN export latest=$(cat LATEST_RELEASE) && sed -i "s/LTS/$latest/g" requirements.txt
+
+# RUN pip install -r requirements.txt
+
+# RUN export PATH=$PATH:`chromedriver-path`
+
+# RUN rm google-chrome-stable_current_amd64.deb
 
 # EXPOSE 5000
 
-# ENV PATH="/flask-docker/env/bin:$PATH"
 
-# RUN . env/bin/activate
 
-# ENTRYPOINT ["/bin/sleep","3600"]
 

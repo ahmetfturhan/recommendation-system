@@ -2,6 +2,8 @@ from flask import Flask, redirect, request, url_for
 from flask import render_template
 import subprocess
 import json
+import redis
+from redis_namespace import StrictRedis
 
 app = Flask(__name__)
 
@@ -27,6 +29,20 @@ def search():
 def index():
     search_query = request.args.get('query')
     brand = request.args.get('brand')
+
+    try:
+        pass
+        redis_connection = redis.StrictRedis()
+        trendyol_redis = StrictRedis(namespace='Trendyol:')
+        amazon_redis = StrictRedis(namespace='Amazon:')
+        tr_cache = trendyol_redis.get(search_query).decode('utf-8')
+        am_cache = amazon_redis.get(search_query).decode('utf-8')
+
+        if tr_cache != None and am_cache != None:
+            print("Cache hit")
+            # return render_template('_index.html', matched=json.loads(tr_cache), not_matched_amazon=json.loads(am_cache), not_matched_trendyol=[], labels=[])
+    except:
+        pass
     # Use the query here to search for something or display it to the user
     search_query = search_query.replace(" ", "+")
     brand = brand.replace(" ", "+")
