@@ -16,10 +16,23 @@ import time
 import json
 import argparse
 import string
+import re
+from transformers import pipeline
+
+
+EMOJI_PATTERN = re.compile("["
+        u"\U0001F600-\U0001F64F"  # emoticons
+        u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+        u"\U0001F680-\U0001F6FF"  # transport & map symbols
+        u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+        u"\U0001F92D"
+                           "]+", flags=re.UNICODE)
+
+EMOTICON_PATTERN = re.compile(r'(:\)|:\(|:/|:\*|:\)\)|:D|:\|)')
 
 
 class Product:
-    def __init__(self, name, price, link, image, rating, rating_count, merchant_name, merchant_rating, website):
+    def __init__(self, name, price, link, image, rating, rating_count, merchant_name, merchant_rating, website, comments_link, comments):
         self.name = name
         self.price = price
         self.link = link
@@ -30,13 +43,17 @@ class Product:
         self.merchant_rating = merchant_rating
         self.formula_rank = 0
         self.website = website
+        self.comments_link = comments_link
+        self.comments = comments
 
 
 class Merchant:
-    def __init__(self, name, rating, image):
+    def __init__(self, name, rating, image, comments_link, product_rating):
         self.name = name
         self.rating = rating
         self.image = image
+        self.comments_link = comments_link
+        self.product_rating = product_rating
 
 def match_similar(trproduct, amproduct, similarity_rate):
     first = remove_punctuation(trproduct)
@@ -157,15 +174,10 @@ def remove_items(test_list, item):
  
     return res
 
-def trendyol(trend_product_list_main, brand, search_query):
-    product_number = 8
+def trendyol(trend_product_list_main, brand, search_query, classifier):
+    product_number = 2
     print("Starting Trendyol")
     start = time.time()
-    
-# Print the ChromeDriver version
-    
-
-# Set the vhs options
     
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('disable-notifications')
@@ -204,7 +216,7 @@ def trendyol(trend_product_list_main, brand, search_query):
             print("trendyol selected brand")
 
     except Exception as e:
-        print("AAAAAAAAAAACouldn't select the brand", e)
+        print("Couldn't select the brand", e)
     sleep(1)
     browser.refresh()
     trend_products_div = WebDriverWait(browser,10).until(EC.presence_of_all_elements_located((By.XPATH, '//div[contains(@class, "p-card-wrppr")]')))
@@ -267,8 +279,8 @@ def trendyol(trend_product_list_main, brand, search_query):
             trend_link_list.append(trend_product_link)
             print("Couldn't get link", e)
         
-                #create a product object
-        new_product = Product(trend_product_desc, trend_product_price, trend_product_link, "0", "000" ,trend_product_rating_count, "0", "0", "Trendyol")
+        #create a product object
+        new_product = Product(trend_product_desc, trend_product_price, trend_product_link, "0", "000" ,trend_product_rating_count, "0", "0", "Trendyol", "0", {})
         if trend_product_price == "0":
             continue
         trend_product_list.append(new_product)
@@ -308,31 +320,36 @@ def trendyol(trend_product_list_main, brand, search_query):
         # get rating
         try:
             # trend_product_rating_box = browser.find_element(By.XPATH, '//div[contains(@class, "product-detail-container")]')
-            rating = browser.find_element(By.XPATH, '//div[contains(@class, "pr-rnr-sm-p")]/span').text
-            # print("qqqqqqqqqqqqqqqqqqqq", rating)
+            trend_product_rating = browser.find_element(By.XPATH, '//div[contains(@class, "pr-rnr-sm-p")]/span').text
         except Exception as e:
-            rating = "0"
+            trend_product_rating = "0"
             print("Couldn't get rating", e)
 
+        # get comments link
+        try:
+            trend_product_comments_link = browser.find_element(By.XPATH, '//a[contains(@class, "rvw-cnt-tx")]').get_property('href')
+            # print("Comments:", trend_product_comments_link)
+        except Exception as e:
+            trend_product_comments_link = 0
+            print("Couldn't get comments link", e)
+
         #create a merchant object
-        new_merchant = Merchant(trend_product_merchant_name, trend_product_merchant_rating, trend_product_img)
+        new_merchant = Merchant(trend_product_merchant_name, trend_product_merchant_rating, trend_product_img, trend_product_comments_link, trend_product_rating)
         trend_merchant_list.append(new_merchant)
-        trend_rating_list.append(rating)
 
     for i, item in enumerate(trend_product_list):
         item.name = brand.capitalize() + " " + item.name
-        trproduct = Product(item.name, item.price, item.link, trend_merchant_list[i].image, trend_rating_list[i], item.rating_count, trend_merchant_list[i].name, trend_merchant_list[i].rating, item.website)
+        trproduct = Product(item.name, item.price, item.link, trend_merchant_list[i].image, trend_merchant_list[i].product_rating, item.rating_count, trend_merchant_list[i].name, trend_merchant_list[i].rating, item.website, trend_merchant_list[i].comments_link, {})
         trend_temp_list.append(trproduct)
 
- 
-    browser.quit()    
-    end = time.time()
-    print("The time of execution of Trendyol script is :",
-      (end-start) * 10**3, "ms")
-
+    # Loop through Product list to find the products that contain the search query
     search_query_split = search_query.lower().split(" ")
-    print(search_query_split)
+    print("Search Query Words: ", search_query_split)
+    trend_last_temp_list = []
+
     for i in trend_temp_list:
+
+        # Remove punctuation from product name
         name_split = remove_punctuation(i)
         # print(name_split)
         is_add = True
@@ -345,12 +362,78 @@ def trendyol(trend_product_list_main, brand, search_query):
         is_add = True
         if is_add:
             # print("Added", i.name)
-            trend_product_list_main.append(i)
+            trend_last_temp_list.append(i)
+
+    # Loop through Product list to scrape comments of all products
+    for i in trend_last_temp_list:
+
+        # If there are no comments, skip the product
+        if i.comments_link == 0:
+            continue
         
+        print("Comments Link:", i.comments_link)
+        # Go to the comments page
+        browser.get(i.comments_link)
+
+        # Wait for max 5 seconds to load the page
+        WebDriverWait(browser, 5).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "rnr-com-tx")))
+
+        trend_product_comments_list = []
+        # get comments
+        try:
+            # Find the comments
+            trend_product_comments = browser.find_elements(By.XPATH, '//div[contains(@class, "rnr-com-tx")]/p')
+
+            # Loop through the comments
+            for j in trend_product_comments:
+                text = j.text
+                # Remove emoji and emoticons from comments
+                no_emoji = EMOJI_PATTERN.sub(r'', text) # no emoji
+                no_emoji = EMOTICON_PATTERN.sub(r'', no_emoji) # no emoticon
+
+                # Append the comment to the list
+                trend_product_comments_list.append(no_emoji)
+                print("Comment:", no_emoji)
+
+        except Exception as e:
+            print("Couldn't scrape comments:", e)
+
+        
+        positive_count, negative_count = 0, 0
+        most_positive_comment, positive_value = "", 0.0
+        most_negative_comment, negative_value = "", 0.0
+
+        for review in trend_product_comments_list:
+            result = classifier(review)
+            if result[0]["label"] == "positive":
+                if result[0]["score"] > positive_value:
+                    positive_value = result[0]["score"]
+                    most_positive_comment = review
+
+                positive_count += 1
+            else:
+                if result[0]["score"] > negative_value:
+                    negative_value = result[0]["score"]
+                    most_negative_comment = review
+                negative_count += 1
+        positive_percentage = positive_count / (positive_count + negative_count)        
+        comments_dict = {"positive_count": positive_count, "negative_count": negative_count, "most_positive_comment": most_positive_comment, "most_negative_comment": most_negative_comment, "positive_percentage": positive_percentage}
+        # Add the comments to the product
+        i.comments = comments_dict
+
+    # Close the browser    
+    browser.quit()
+    for it in trend_last_temp_list:
+        trend_product_list_main.append(it)
+    # Print the time of execution    
+    end = time.time()
+    print("The time of execution of Trendyol script is :",
+      (end-start) * 10**3, "ms")
     
 
-def amazon(amazon_product_list_main, brand, search_query):
-    product_number = 8
+def amazon(amazon_product_list_main, brand, search_query, classifier):
+    product_number = 2
     print("Starting Amazon")
     start = time.time()
 
@@ -435,14 +518,15 @@ def amazon(amazon_product_list_main, brand, search_query):
 
         amazon_product_image = item.find_element(By.XPATH, './/img[@class="s-image"]').get_attribute('src')
 
-        new_product = Product(amazon_product_desc.text, price, amazon_product_link, amazon_product_image, amazon_ratings, amazon_rating_num, "0", "0", "Amazon")
+        # TODO: Change the lsat 2 parameters, comments link and comments
+        new_product = Product(amazon_product_desc.text, price, amazon_product_link, amazon_product_image, amazon_ratings, amazon_rating_num, "0", "0", "Amazon", "0", {})
         amazon_product_list.append(new_product)
 
+    # Traverse through the product links
     for i, link in enumerate(product_link):
         if i == product_number:
             break
         browser.get(link)
-
 
         #Get merchant info
         try:
@@ -457,20 +541,22 @@ def amazon(amazon_product_list_main, brand, search_query):
         except:
             merchant_name = "Amazon.com.tr"   
         
-        new_merchant = Merchant(merchant_name, 0, 0)
+
+        try:
+            reviews_link = browser.find_element(By.XPATH, '//a[contains(@data-hook, "see-all-reviews-link-foot")]').get_attribute("href")
+        except:
+            reviews_link = 0
+
+        new_merchant = Merchant(merchant_name, 0, 0, reviews_link, 0)
         amazon_merchant_list.append(new_merchant)
 
     for i, item in enumerate(amazon_product_list):
-        product_obj = Product(item.name, item.price, item.link, item.image, item.rating, item.rating_count, amazon_merchant_list[i].name, amazon_merchant_list[i].rating, item.website)
+        # TODO: Change the lsat 2 parameters, comments link and comments
+        product_obj = Product(item.name, item.price, item.link, item.image, item.rating, item.rating_count, amazon_merchant_list[i].name, amazon_merchant_list[i].rating, item.website, amazon_merchant_list[i].comments_link, {})
         amazon_temp_list.append(product_obj)
 
 
-    browser.quit()
-    end = time.time()
-    print("The time of execution of Amazon script is :",
-      (end-start) * 10**3, "ms")
-
-
+    amazon_last_temp_list = []
     # Remove the products that do not contain the search_query
     search_query_split = search_query.lower().split(" ")
     for i in amazon_temp_list:
@@ -483,9 +569,80 @@ def amazon(amazon_product_list_main, brand, search_query):
                 is_add = False
         is_add = True
         if is_add:
-            amazon_product_list_main.append(i)
+            amazon_last_temp_list.append(i)
 
+    for i in amazon_last_temp_list:
+        # If there are no comments, skip the product
+        if i.comments_link == 0:
+            continue
+        
+        print("Comments Link:", i.comments_link)
+        # Go to the comments page
+        amazon_product_comments_list = []
 
+        browser.get(i.comments_link)
+
+        counter = 0
+        while counter != 3:
+            if counter != 0:
+                try:
+                    WebDriverWait(browser, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//li[contains(@class, "a-last")]')))
+                    browser.find_element("xpath", '//li[contains(@class, "a-last")]/a').click()
+                    time.sleep(1)
+                except Exception as e:
+                    print("Couldn't find next page", e)
+                    break
+
+            WebDriverWait(browser, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//span[contains(@class, "a-size-base review-text review-text-content")]/span')))
+
+            # get comments
+            try:
+                amazon_product_comments = browser.find_elements(By.XPATH, '//span[contains(@class, "a-size-base review-text review-text-content")]/span')
+                for j in amazon_product_comments:
+                    text = j.text
+                    text = " ".join(text.split()[:100])
+
+                    
+                    no_emoji = EMOJI_PATTERN.sub(r'', text) # no emoji
+                    no_emoji = EMOTICON_PATTERN.sub(r'', no_emoji) # no emoticon
+
+                    amazon_product_comments_list.append(no_emoji)
+            except:
+                print("Couldn't scrape comments")
+
+            counter += 1
+
+        positive_count, negative_count = 0, 0
+        most_positive_comment, positive_value = "", 0.0
+        most_negative_comment, negative_value = "", 0.0
+
+        for review in amazon_product_comments_list:
+            result = classifier(review)
+            if result[0]["label"] == "positive":
+                if result[0]["score"] > positive_value:
+                    positive_value = result[0]["score"]
+                    most_positive_comment = review
+
+                positive_count += 1
+            else:
+                if result[0]["score"] > negative_value:
+                    negative_value = result[0]["score"]
+                    most_negative_comment = review
+                negative_count += 1
+        positive_percentage = positive_count / (positive_count + negative_count)        
+        comments_dict = {"positive_count": positive_count, "negative_count": negative_count, "most_positive_comment": most_positive_comment, "most_negative_comment": most_negative_comment, "positive_percentage": positive_percentage}
+        # Add the comments to the product
+        i.comments = comments_dict
+    
+    for it in amazon_last_temp_list:
+        amazon_product_list_main.append(it)   
+
+    browser.quit()
+    end = time.time()
+    print("The time of execution of Amazon script is :",
+      (end-start) * 10**3, "ms")
 
 
 
@@ -505,14 +662,16 @@ if __name__ == '__main__':
     print("Search query: ", search_query)
     print("Brand:", brand)
 
+    classifier = pipeline("sentiment-analysis", model="savasy/bert-base-turkish-sentiment-cased", tokenizer="savasy/bert-base-turkish-sentiment-cased")
+
     manager = mp.Manager()
     trendyol_product_list_main = manager.list()
     amazon_product_list_main = manager.list()
 
-    trendyol_process = mp.Process(target=trendyol,args=(trendyol_product_list_main, brand,search_query))
+    trendyol_process = mp.Process(target=trendyol,args=(trendyol_product_list_main, brand,search_query, classifier))
     trendyol_process.start()
 
-    amazon_process = mp.Process(target=amazon, args=(amazon_product_list_main, brand,search_query))
+    amazon_process = mp.Process(target=amazon, args=(amazon_product_list_main, brand,search_query, classifier))
     amazon_process.start()
 
     trendyol_process.join()

@@ -24,6 +24,7 @@
       
         <div class="product_info" style="font-size: 22px;">
           <p class="card-title">{{ item["name"] }}</p>
+          <p class="card-text"> Comments: {{ item["comments"]["positive_percentage"] }} %</p>
           <p class="card-text"><img class="price" src="/static/images/price.png" alt=""> Price: {{ item["price"] }} TL</p>
           <p class="card-text"><img class="rate" src="/static/images/rate.png" alt=""> Rating: {{ item["rating"] }}</p>
           <p class="card-text"><img class="rating-count" src="/static/images/rating-count.png" alt="">Rating Count: {{ item["rating_count"] }}</p>
