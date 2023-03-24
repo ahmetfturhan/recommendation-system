@@ -97,6 +97,34 @@ body {
  }
   
   
+  .comment-popup{
+    cursor: pointer;
+ }
+
+ 
+
+.popup{
+  position: absolute;
+  bottom: 55px;
+  width: 500px;
+  background: #fff;
+  box-sizing: border-box;
+  border-radius: 4px;
+  visibility: hidden;
+  opacity: 0;
+
+}
+.comment-popup:hover .popup{
+  position: absolute;
+  z-index: 11;
+  visibility: visible;
+  border: #333;
+  opacity: 1;
+}
+
+
+
+
   input[type="text"] {
     width: 400px;
     padding: 8px 14px;
