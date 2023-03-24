@@ -366,7 +366,7 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
 
     # Loop through Product list to scrape comments of all products
     for i in trend_last_temp_list:
-
+        print("ALOOOOOOOOOOOOOOOOOOO", i.comments_link)
         # If there are no comments, skip the product
         if i.comments_link == 0:
             continue
@@ -374,50 +374,69 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
         print("Comments Link:", i.comments_link)
         # Go to the comments page
         browser.get(i.comments_link)
-
+        
         # Wait for max 5 seconds to load the page
-        WebDriverWait(browser, 5).until(
-                EC.presence_of_element_located((By.CLASS_NAME, "rnr-com-tx")))
+        try:
+            WebDriverWait(browser, 5).until(
+                    EC.presence_of_element_located((By.CLASS_NAME, "rnr-com-tx")))
+        except Exception as e:
+            print("Couldn't scrape trendyol comments:", e)
+            WebDriverWait(browser, 5).until(
+                    EC.presence_of_element_located((By.CLASS_NAME, "comment-text")))
+
 
         trend_product_comments_list = []
         # get comments
-        try:
+        flag = 0
             # Find the comments
+        try:
             trend_product_comments = browser.find_elements(By.XPATH, '//div[contains(@class, "rnr-com-tx")]/p')
-
-            # Loop through the comments
-            for j in trend_product_comments:
-                text = j.text
-                # Remove emoji and emoticons from comments
-                no_emoji = EMOJI_PATTERN.sub(r'', text) # no emoji
-                no_emoji = EMOTICON_PATTERN.sub(r'', no_emoji) # no emoticon
-
-                # Append the comment to the list
-                trend_product_comments_list.append(no_emoji)
-                print("Comment:", no_emoji)
-
         except Exception as e:
-            print("Couldn't scrape comments:", e)
+            print("Couldn't scrape trendyol comments:", e)
+            try:
+                trend_product_comments = browser.find_elements(By.XPATH, '//div[contains(@class, "comment-text")]/p')
+            except Exception as e:
+                flag = 1
+                print("Couldn't scrape trendyol comments:", e)
+
+        # Loop through the comments
+        for j in trend_product_comments:
+            text = j.text
+            print("qweqweqweqweqqweqweqweqweqweqewqwe", text)
+            # Remove emoji and emoticons from comments
+            no_emoji = EMOJI_PATTERN.sub(r'', text) # no emoji
+            no_emoji = EMOTICON_PATTERN.sub(r'', no_emoji) # no emoticon
+
+            # Append the comment to the list
+            trend_product_comments_list.append(no_emoji)
+            print("Trendyol Comment:", no_emoji)
+
+
 
         
         positive_count, negative_count = 0, 0
         most_positive_comment, positive_value = "", 0.0
         most_negative_comment, negative_value = "", 0.0
 
-        for review in trend_product_comments_list:
-            result = classifier(review)
-            if result[0]["label"] == "positive":
-                if result[0]["score"] > positive_value:
-                    positive_value = result[0]["score"]
-                    most_positive_comment = review
+        if flag == 0:
+            for review in trend_product_comments_list:
+                result = classifier(review)
+                if result[0]["label"] == "positive":
+                    if result[0]["score"] > positive_value:
+                        positive_value = result[0]["score"]
+                        most_positive_comment = review
 
-                positive_count += 1
-            else:
-                if result[0]["score"] > negative_value:
-                    negative_value = result[0]["score"]
-                    most_negative_comment = review
-                negative_count += 1
-        positive_percentage = positive_count / (positive_count + negative_count)        
+                    positive_count += 1
+                else:
+                    if result[0]["score"] > negative_value:
+                        negative_value = result[0]["score"]
+                        most_negative_comment = review
+                    negative_count += 1
+
+        if positive_count + negative_count == 0:
+            positive_percentage = 0
+        else:        
+            positive_percentage = positive_count / (positive_count + negative_count)     
         comments_dict = {"positive_count": positive_count, "negative_count": negative_count, "most_positive_comment": most_positive_comment, "most_negative_comment": most_negative_comment, "positive_percentage": positive_percentage}
         # Add the comments to the product
         i.comments = comments_dict
@@ -631,7 +650,10 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
                     negative_value = result[0]["score"]
                     most_negative_comment = review
                 negative_count += 1
-        positive_percentage = positive_count / (positive_count + negative_count)        
+        if positive_count + negative_count == 0:
+            positive_percentage = 0
+        else:        
+            positive_percentage = positive_count / (positive_count + negative_count)   
         comments_dict = {"positive_count": positive_count, "negative_count": negative_count, "most_positive_comment": most_positive_comment, "most_negative_comment": most_negative_comment, "positive_percentage": positive_percentage}
         # Add the comments to the product
         i.comments = comments_dict
