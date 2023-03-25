@@ -103,20 +103,25 @@ body {
 
  
 
-.popup{
+ .popup{
+  font-size: 18px;
   position: absolute;
-  bottom: 55px;
-  width: 500px;
-  background: #fff;
-  box-sizing: border-box;
+  bottom: 190px;
+  left: 450px;
+  width: auto;
+  height: auto;
+  background: #faa2a2;
+  padding: 8px;
+  box-sizing: content-box;
+  border: 1px solid #333; /* add a border */
   border-radius: 4px;
   visibility: hidden;
   opacity: 0;
-
+  z-index: 9999; /* set a high z-index to ensure it appears on top of everything */
 }
 .comment-popup:hover .popup{
   position: absolute;
-  z-index: 11;
+  
   visibility: visible;
   border: #333;
   opacity: 1;
