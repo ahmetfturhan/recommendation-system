@@ -1,6 +1,4 @@
 import logging
-import sys
-import selenium as sl
 import multiprocessing as mp
 from selenium import webdriver
 from time import *
@@ -32,7 +30,7 @@ EMOTICON_PATTERN = re.compile(r'(:\)|:\(|:/|:\*|:\)\)|:D|:\|)')
 
 
 class Product:
-    def __init__(self, name, price, link, image, rating, rating_count, merchant_name, merchant_rating, website, comments_link, comments):
+    def __init__(self, name, price, link, image, rating, rating_count, merchant_name, merchant_rating, website, comments_link, comments, starred_attributes):
         self.name = name
         self.price = price
         self.link = link
@@ -45,15 +43,19 @@ class Product:
         self.website = website
         self.comments_link = comments_link
         self.comments = comments
+        self.starred_attributes = starred_attributes
+
+
 
 
 class Merchant:
-    def __init__(self, name, rating, image, comments_link, product_rating):
+    def __init__(self, name, rating, image, comments_link, product_rating, starred_attributes):
         self.name = name
         self.rating = rating
         self.image = image
         self.comments_link = comments_link
         self.product_rating = product_rating
+        self.starred_attributes = starred_attributes
 
 def match_similar(trproduct, amproduct, similarity_rate):
     first = remove_punctuation(trproduct)
@@ -267,8 +269,7 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
                 print("Couldn't get price", e)
         if trend_product_price != 0:
             trend_product_price = trend_product_price.replace("TL", "")
-            trend_product_price = trend_product_price.replace(",", ".")
-            trend_product_price = trend_product_price.strip()
+            trend_product_price = (trend_product_price.replace(",", ".")).strip()
 
         # get links
         try:
@@ -280,7 +281,7 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
             print("Couldn't get link", e)
         
         #create a product object
-        new_product = Product(trend_product_desc, trend_product_price, trend_product_link, "0", "000" ,trend_product_rating_count, "0", "0", "Trendyol", "0", {})
+        new_product = Product(trend_product_desc, trend_product_price, trend_product_link, "0", "000" ,trend_product_rating_count, "0", "0", "Trendyol", "0", {}, {})
         if trend_product_price == "0":
             continue
         trend_product_list.append(new_product)
@@ -291,7 +292,7 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
             break
         browser.get(link)
 
-        #wait for max 10 seconds to load the page
+        #wait for max 5 seconds to load the page
         WebDriverWait(browser, 5).until(
         EC.presence_of_element_located((By.CLASS_NAME, "product-seller-line"))
     )
@@ -319,7 +320,6 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
 
         # get rating
         try:
-            # trend_product_rating_box = browser.find_element(By.XPATH, '//div[contains(@class, "product-detail-container")]')
             trend_product_rating = browser.find_element(By.XPATH, '//div[contains(@class, "pr-rnr-sm-p")]/span').text
         except Exception as e:
             trend_product_rating = "0"
@@ -333,19 +333,33 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
             trend_product_comments_link = 0
             print("Couldn't get comments link", e)
 
+        # Get Starred Attributes if exists
+        starred_attr = {}
+        try:
+            if browser.find_element(By.CLASS_NAME, "starred-attributes").is_displayed():
+                print("Starred Attributes Found")
+                attribute_titles = browser.find_elements(By.XPATH, '//span[contains(@class, "attribute-label")]')
+                titles = [i.text for i in attribute_titles]
+
+                attribute_values = browser.find_elements(By.XPATH, '//span[contains(@class, "attribute-value")]')
+                for counter, i in enumerate(attribute_values):
+                    starred_attr[titles[counter]] = i.text
+        except NoSuchElementException:
+            print("Starred Attributes Not Found")
+
         #create a merchant object
-        new_merchant = Merchant(trend_product_merchant_name, trend_product_merchant_rating, trend_product_img, trend_product_comments_link, trend_product_rating)
+        new_merchant = Merchant(trend_product_merchant_name, trend_product_merchant_rating, trend_product_img, trend_product_comments_link, trend_product_rating, starred_attr)
         trend_merchant_list.append(new_merchant)
 
     for i, item in enumerate(trend_product_list):
         item.name = brand.capitalize() + " " + item.name
-        trproduct = Product(item.name, item.price, item.link, trend_merchant_list[i].image, trend_merchant_list[i].product_rating, item.rating_count, trend_merchant_list[i].name, trend_merchant_list[i].rating, item.website, trend_merchant_list[i].comments_link, {})
+        trproduct = Product(item.name, item.price, item.link, trend_merchant_list[i].image, trend_merchant_list[i].product_rating, item.rating_count, trend_merchant_list[i].name, trend_merchant_list[i].rating, item.website, trend_merchant_list[i].comments_link, {}, trend_merchant_list[i].starred_attributes)
         trend_temp_list.append(trproduct)
 
     # Loop through Product list to find the products that contain the search query
     search_query_split = search_query.lower().split(" ")
     print("Search Query Words: ", search_query_split)
-    trend_last_temp_list = []
+    trend_last_temp_list = [] # Use a temp list to store the products that contain the search query
 
     for i in trend_temp_list:
 
@@ -366,7 +380,6 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
 
     # Loop through Product list to scrape comments of all products
     for i in trend_last_temp_list:
-        print("ALOOOOOOOOOOOOOOOOOOO", i.comments_link)
         # If there are no comments, skip the product
         if i.comments_link == 0:
             continue
@@ -377,32 +390,37 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
         
         # Wait for max 5 seconds to load the page
         try:
-            WebDriverWait(browser, 5).until(
-                    EC.presence_of_element_located((By.CLASS_NAME, "rnr-com-tx")))
-        except Exception as e:
-            print("Couldn't scrape trendyol comments:", e)
-            WebDriverWait(browser, 5).until(
-                    EC.presence_of_element_located((By.CLASS_NAME, "comment-text")))
+            WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "rnr-com-tx")))
+        except TimeoutException:
+            pass
+            print("Couldn't scrape trendyol comments:, Timeout occured", )
+
+        class_name = "null"
+
+        # Trendyol has 2 different templates for the comment page
+        try:
+            if browser.find_element(By.CLASS_NAME, "rnr-com-tx").is_displayed():
+                class_name = "rnr-com-tx"
+        except NoSuchElementException:
+            print("No such element: rnr-com-tx")
+            try:
+                if browser.find_element(By.CLASS_NAME, "comment-text").is_displayed():
+                    class_name = "comment-text"
+            except NoSuchElementException:
+                print("No such element: comment-text")
 
 
         trend_product_comments_list = []
-        # get comments
-        flag = 0
-            # Find the comments
+
+        # Find the comments
         try:
-            trend_product_comments = browser.find_elements(By.XPATH, '//div[contains(@class, "rnr-com-tx")]/p')
-        except Exception as e:
-            print("Couldn't scrape trendyol comments:", e)
-            try:
-                trend_product_comments = browser.find_elements(By.XPATH, '//div[contains(@class, "comment-text")]/p')
-            except Exception as e:
-                flag = 1
-                print("Couldn't scrape trendyol comments:", e)
+            trend_product_comments = browser.find_elements(By.XPATH, f'//div[contains(@class, "{class_name}")]/p')
+        except TimeoutException:
+            print("Couldn't scrape trendyol comments:, Timeout occured", )
 
         # Loop through the comments
         for j in trend_product_comments:
             text = j.text
-            print("qweqweqweqweqqweqweqweqweqweqewqwe", text)
             # Remove emoji and emoticons from comments
             no_emoji = EMOJI_PATTERN.sub(r'', text) # no emoji
             no_emoji = EMOTICON_PATTERN.sub(r'', no_emoji) # no emoticon
@@ -412,13 +430,12 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
             print("Trendyol Comment:", no_emoji)
 
 
-
-        
+        # Analyze comments and count the number of positive and negative comments
         positive_count, negative_count = 0, 0
         most_positive_comment, positive_value = "", 0.0
         most_negative_comment, negative_value = "", 0.0
 
-        if flag == 0:
+        if class_name != "null":
             for review in trend_product_comments_list:
                 result = classifier(review)
                 if result[0]["label"] == "positive":
@@ -438,11 +455,15 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
         else:        
             positive_percentage = positive_count / (positive_count + negative_count)     
         comments_dict = {"positive_count": positive_count, "negative_count": negative_count, "most_positive_comment": most_positive_comment, "most_negative_comment": most_negative_comment, "positive_percentage": positive_percentage}
+        
         # Add the comments to the product
         i.comments = comments_dict
+        print("Comments:", comments_dict)
+
 
     # Close the browser    
     browser.quit()
+
     for it in trend_last_temp_list:
         trend_product_list_main.append(it)
     # Print the time of execution    
@@ -537,8 +558,7 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
 
         amazon_product_image = item.find_element(By.XPATH, './/img[@class="s-image"]').get_attribute('src')
 
-        # TODO: Change the lsat 2 parameters, comments link and comments
-        new_product = Product(amazon_product_desc.text, price, amazon_product_link, amazon_product_image, amazon_ratings, amazon_rating_num, "0", "0", "Amazon", "0", {})
+        new_product = Product(amazon_product_desc.text, price, amazon_product_link, amazon_product_image, amazon_ratings, amazon_rating_num, "0", "0", "Amazon", "0", {}, {})
         amazon_product_list.append(new_product)
 
     # Traverse through the product links
@@ -566,12 +586,12 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
         except:
             reviews_link = 0
 
-        new_merchant = Merchant(merchant_name, 0, 0, reviews_link, 0)
+        new_merchant = Merchant(merchant_name, 0, 0, reviews_link, 0, {})
         amazon_merchant_list.append(new_merchant)
 
     for i, item in enumerate(amazon_product_list):
         # TODO: Change the lsat 2 parameters, comments link and comments
-        product_obj = Product(item.name, item.price, item.link, item.image, item.rating, item.rating_count, amazon_merchant_list[i].name, amazon_merchant_list[i].rating, item.website, amazon_merchant_list[i].comments_link, {})
+        product_obj = Product(item.name, item.price, item.link, item.image, item.rating, item.rating_count, amazon_merchant_list[i].name, amazon_merchant_list[i].rating, item.website, amazon_merchant_list[i].comments_link, {}, {})
         amazon_temp_list.append(product_obj)
 
 
@@ -620,16 +640,15 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
             try:
                 amazon_product_comments = browser.find_elements(By.XPATH, '//span[contains(@class, "a-size-base review-text review-text-content")]/span')
                 for j in amazon_product_comments:
-                    text = j.text
-                    text = " ".join(text.split()[:100])
+                    text = " ".join(j.text.split()[:100]) # get first 100 words
 
                     
                     no_emoji = EMOJI_PATTERN.sub(r'', text) # no emoji
                     no_emoji = EMOTICON_PATTERN.sub(r'', no_emoji) # no emoticon
 
                     amazon_product_comments_list.append(no_emoji)
-            except:
-                print("Couldn't scrape comments")
+            except Exception as e:
+                print("Couldn't scrape comments", e)
 
             counter += 1
 
@@ -655,8 +674,10 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
         else:        
             positive_percentage = positive_count / (positive_count + negative_count)   
         comments_dict = {"positive_count": positive_count, "negative_count": negative_count, "most_positive_comment": most_positive_comment, "most_negative_comment": most_negative_comment, "positive_percentage": positive_percentage}
+        
         # Add the comments to the product
         i.comments = comments_dict
+        print("Comments:", comments_dict)
     
     for it in amazon_last_temp_list:
         amazon_product_list_main.append(it)   
@@ -669,7 +690,7 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
 
 
 if __name__ == '__main__':
-
+    DATA_PREFIX = "./data/"
     parser = argparse.ArgumentParser()
     parser.add_argument('--arg1', type=str, help='Description of argument 1')
     parser.add_argument('--arg2', type=str, help='Description of argument 2')
@@ -701,14 +722,14 @@ if __name__ == '__main__':
 
     trendyol_product_list_main = sorted(trendyol_product_list_main, key=lambda x: len(x.name), reverse=True)
     amazon_product_list_main = sorted(amazon_product_list_main, key=lambda x: len(x.name), reverse=True)
-    f = open("amazon.txt", "wb")
+    f = open(DATA_PREFIX + "amazon.txt", "wb")
     for i in amazon_product_list_main:
         f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))
         f.write("\n".encode('utf-8'))
     f.close()
 
     
-    f = open("trendyol.txt", "wb")
+    f = open(DATA_PREFIX + "trendyol.txt", "wb")
     for i in trendyol_product_list_main:
         f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))
         f.write("\n".encode('utf-8'))
@@ -841,10 +862,6 @@ if __name__ == '__main__':
             matched_products[matched_products_index].append(max_product)
 
 
-
-
-
-
     # Move the products with no match to a separate list 
     to_be_removed = []
     for i, group in enumerate(matched_products):
@@ -855,10 +872,6 @@ if __name__ == '__main__':
     for i in sorted(to_be_removed, reverse=True):
         matched_products.pop(i)
 
-
-
-
-
     print("After no match groups")
     for counter, i in enumerate(matched_products):
         print("\nGroup", counter )
@@ -868,10 +881,6 @@ if __name__ == '__main__':
     print("\nNo Match")
     for i in no_match:
         print(i.name, i.merchant_name)
-
-
-
-
 
 
     matched_products_with_formula = []
@@ -960,7 +969,7 @@ if __name__ == '__main__':
     for i in no_match:
         print(i.name, "\n")
 
-    f = open("groups.txt", "wb")
+    f = open(DATA_PREFIX + "groups.txt", "wb")
     for i in matched_products_with_formula:
         for j in i:
             f.write((json.dumps(j.__dict__, ensure_ascii=False)).encode('utf8'))
@@ -968,19 +977,19 @@ if __name__ == '__main__':
         f.write("###\n".encode('utf-8'))
     f.close()
 
-    f = open("no_groups_amazon.txt", "wb")
+    f = open(DATA_PREFIX + "no_groups_amazon.txt", "wb")
     for i in no_match_amazon:    
         f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))
         f.write("\n".encode('utf-8'))
     f.close()
 
-    f = open("no_groups_trendyol.txt", "wb")
+    f = open(DATA_PREFIX + "no_groups_trendyol.txt", "wb")
     for i in no_match_trendyol:    
         f.write((json.dumps(i.__dict__, ensure_ascii=False)).encode('utf8'))
         f.write("\n".encode('utf-8'))
     f.close()
 
-    f = open("labels.txt", "wb")
+    f = open(DATA_PREFIX + "labels.txt", "wb")
     if len(group_labels) == 0:
         f.write('{"name": " "}'.encode('utf-8'))
     else:
