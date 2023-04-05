@@ -1,140 +1,119 @@
 {% extends '_base.html' %}
 
 {% block groups %}
-
-{% for group in matched %}
-
-<div class="card_list">
-  
-  <div class="buttonsAndLabel">
-  <button class="pre-btn"> <img src="/static/images/back.png" alt=""></button>
-  <button class="nxt-btn"> <img src="/static/images/back.png" alt=""></button>
-  <div class="group_labels">{{ labels[loop.index0]["name"] }}</div>
-  </div>
-
-<div class="card_container">
-
-{% for item in group %}
-  
-
-<div class="card_box">
-  <div class="card">
-    <div class="image_and_info">
-      <img class="product_image" src="{{ item["image"] }}"  alt="...">
-      
-        <div class="product_info" style="font-size: 22px;">
-          <p class="card-title">{{ item["name"] }}</p>
-          <p class="card-text"> Comments: {{ item["comments"]["positive_percentage"] }} %</p>
-          <p class="card-text"><img class="price" src="/static/images/price.png" alt=""> Price: {{ item["price"] }} TL</p>
-          <div class="comment-popup"><div class="popup">  <div> <div style="font-weight: bold;">Positive Comment:</div>  {{ item["comments"]["most_positive_comment"] }}</div>  <div><div style="font-weight: bold;">Negative Comment:</div> {{ item["comments"]["most_negative_comment"] }}</div>    </div><p class="card-text"><img class="rate" src="/static/images/rate.png" alt=""> Rating: {{ item["rating"] }}</p></div>
-          <p class="card-text"><img class="rating-count" src="/static/images/rating-count.png" alt="">Rating Count: {{ item["rating_count"] }}</p>
-          <p class="card-text"><img class="shipped" src="/static/images/shipped.png" alt=""> Seller: {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
-          {% if item.website == "Amazon" %}
-          <div>
-            <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
-            <button class="amazon_button" type="submit"><img src="/static/images/amazon.png" alt=""></button>
-          </form>
+  {% for group in matched %}
+    <div class="card_list">
+      <div class="buttonsAndLabel">
+        <button class="pre-btn"><img src="/static/images/back.png" alt=""></button>
+        <button class="nxt-btn"><img src="/static/images/back.png" alt=""></button>
+        <div class="group_labels">{{ labels[loop.index0]["name"] }}</div>
+      </div>
+      <div class="card_container">
+        {% for item in group %}
+          <div class="card_box">
+            <div class="card">
+              <div class="image_and_info">
+                <img class="product_image" src="{{ item["image"] }}" alt="...">
+                <div class="product_info" style="font-size: 15px;">
+                  <p class="card-title" style="font-size: 16px;margin-bottom: 1rem;">{{ item["name"] }}</p>
+                  <p class="card-text" style="margin-bottom: 1rem;"><img class="price" src="/static/images/price.png" alt=""> Price: {{ item["price"] }} TL</p>
+                  <p class="card-text" style="margin-bottom: 1rem;"><img class="rate" src="/static/images/rate.png" alt=""> Rating: {{ item["rating"] }} ({{ item["rating_count"] }})</p>
+                  <p class="card-text" style="margin-bottom: 1rem;"><img class="shipped" src="/static/images/shipped.png" alt=""> Seller: {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
+                  {% if item.website == "Amazon" %}
+                    <div>
+                      <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
+                        <button class="amazon_button" type="submit"><img src="/static/images/amazon.png" alt=""></button>
+                      </form>
+                    </div>
+                  {% else %}
+                    <div>
+                      <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
+                        <button class="trendyol_button" type="submit"><img src="/static/images/Trendyol_online.png" alt=""></button>
+                      </form>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
           </div>
-          {% else %}
-          <div>
-            <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
-              <button  class="trendyol_button" type="submit"><img src="/static/images/Trendyol_online.png" alt=""></button>
-            </form>
-          </div>
-          {% endif %}
-        </div>
-        
-    </div> 
-      
-  
+        {% endfor %}
+      </div>
     </div>
-  </div>
-{% endfor %}
-</div>
-</div>
-{% endfor %}
+  {% endfor %}
 {% endblock %}
+
 
 
 {% block no_match_amazon %}
-
-  {% if not_matched_amazon | length != 0 %}
-    <h2 style="text-align:center; font-weight: bold;">More Products From Amazon</h2>
-  {% endif %}
-{% for item in not_matched_amazon %}
-<div class="card_box">
-  <div class="card">
-    <div class="image_and_info">
-      <img class="product_image" src="{{ item["image"] }}"  alt="...">
-      
-        <div class="product_info" style="font-size: 22px;">
-          <p class="card-title">{{ item["name"] }}</p>
-          <p class="card-text"><img class="price" src="/static/images/price.png" alt=""> : {{ item["price"] }} TL</p>
-          <p class="card-text"><img class="rate" src="/static/images/rate.png" alt=""> : {{ item["rating"] }}</p>
-          <p class="card-text"><img class="rating-count" src="/static/images/rating-count.png" alt="">: {{ item["rating_count"] }}</p>
-          <p class="card-text"><img class="shipped" src="/static/images/shipped.png" alt=""> : {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
-          {% if item.website == "Amazon" %}
-          <div>
-            <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
-            <button class="amazon_button" type="submit"><img src="/static/images/amazon.png" alt=""></button>
-          </form>
-          </div>
-          {% else %}
-          <div>
-            <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
-              <button  class="trendyol_button" type="submit"><img src="/static/images/Trendyol_online.png" alt=""></button>
-            </form>
-          </div>
-          {% endif %}
-        </div>
-        
-    </div> 
-      
-  
-    </div>
-  </div>
-  {% endfor %}
-  
-  {% endblock %}
-
-{% block no_match_trendyol %}
-  {% if not_matched_trendyol | length != 0 %}
-    <h2 style="text-align:center; font-weight: bold;">More Products From Trendyol</h2>
+  {% if not_matched_amazon|length != 0 %}
+    <h2 style="text-align: center; font-weight: bold;">More Products From Amazon</h2>
   {% endif %}
 
-{% for item in not_matched_trendyol %}
-<div class="card_box">
-  <div class="card">
-    <div class="image_and_info">
-      <img class="product_image" src="{{ item["image"] }}"  alt="...">
-      
-        <div class="product_info" style="font-size: 22px;">
-          <p class="card-title">{{ item["name"] }}</p>
-          <p class="card-text"><img class="price" src="/static/images/price.png" alt="">   : {{ item["price"] }} TL</p>
-          <p class="card-text"><img class="rate" src="/static/images/rate.png" alt="">   : {{ item["rating"] }}</p>
-          <p class="card-text"><img class="rating-count" src="/static/images/rating-count.png" alt="">   : {{ item["rating_count"] }}</p>
-          <p class="card-text"><img class="shipped" src="/static/images/shipped.png" alt="">   : {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
+  {% for item in not_matched_amazon %}
+  <div class="card_box">
+    <div class="card">
+      <div class="image_and_info">
+        <img class="product_image" src="{{ item["image"] }}" alt="...">
+        <div class="product_info" style="font-size: 15px;">
+          <p class="card-title" style="font-size: 16px;margin-bottom: 1rem;">{{ item["name"] }}</p>
+          <p class="card-text" style="margin-bottom: 1rem;"><img class="price" src="/static/images/price.png" alt=""> Price: {{ item["price"] }} TL</p>
+          <p class="card-text" style="margin-bottom: 1rem;"><img class="rate" src="/static/images/rate.png" alt=""> Rating: {{ item["rating"] }} ({{ item["rating_count"] }})</p>
+          <p class="card-text" style="margin-bottom: 1rem;"><img class="shipped" src="/static/images/shipped.png" alt=""> Seller: {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
           {% if item.website == "Amazon" %}
-          <div>
-            <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
-            <button class="amazon_button" type="submit"><img src="/static/images/amazon.png" alt=""></button>
-          </form>
-          </div>
+            <div>
+              <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
+                <button class="amazon_button" type="submit"><img src="/static/images/amazon.png" alt=""></button>
+              </form>
+            </div>
           {% else %}
-          <div>
-            <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
-              <button  class="trendyol_button" type="submit"><img src="/static/images/Trendyol_online.png" alt=""></button>
-            </form>
-          </div>
+            <div>
+              <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
+                <button class="trendyol_button" type="submit"><img src="/static/images/Trendyol_online.png" alt=""></button>
+              </form>
+            </div>
           {% endif %}
         </div>
-        
-    </div> 
-      
-  
+      </div>
     </div>
   </div>
   {% endfor %}
 {% endblock %}
+
+
+{% block no_match_trendyol %}
+  {% if not_matched_trendyol|length != 0 %}
+    <h2 style="text-align: center; font-weight: bold;">More Products From Trendyol</h2>
+  {% endif %}
+
+  {% for item in not_matched_trendyol %}
+  <div class="card_box">
+    <div class="card">
+      <div class="image_and_info">
+        <img class="product_image" src="{{ item["image"] }}" alt="...">
+        <div class="product_info" style="font-size: 15px;">
+          <p class="card-title" style="font-size: 16px;margin-bottom: 1rem;">{{ item["name"] }}</p>
+          <p class="card-text" style="margin-bottom: 1rem;"><img class="price" src="/static/images/price.png" alt=""> Price: {{ item["price"] }} TL</p>
+          <p class="card-text" style="margin-bottom: 1rem;"><img class="rate" src="/static/images/rate.png" alt=""> Rating: {{ item["rating"] }} ({{ item["rating_count"] }})</p>
+          <p class="card-text" style="margin-bottom: 1rem;"><img class="shipped" src="/static/images/shipped.png" alt=""> Seller: {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
+          {% if item.website == "Amazon" %}
+            <div>
+              <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
+                <button class="amazon_button" type="submit"><img src="/static/images/amazon.png" alt=""></button>
+              </form>
+            </div>
+          {% else %}
+            <div>
+              <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
+                <button class="trendyol_button" type="submit"><img src="/static/images/Trendyol_online.png" alt=""></button>
+              </form>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+{% endblock %}
+
 
 
