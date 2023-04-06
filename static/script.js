@@ -15,5 +15,3 @@ cardContainers.forEach((item, i) => {
         item.scrollLeft -= containerWidth/2;
     })
 })
-
-

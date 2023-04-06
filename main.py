@@ -177,13 +177,13 @@ def remove_items(test_list, item):
     return res
 
 def trendyol(trend_product_list_main, brand, search_query, classifier):
-    product_number = 2
+    product_number = 1
     print("Starting Trendyol")
     start = time.time()
     
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('disable-notifications')
-    # chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--headless')
     chrome_options.add_argument('--enable-gpu')
     browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
     browser.maximize_window()
@@ -473,7 +473,7 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
     
 
 def amazon(amazon_product_list_main, brand, search_query, classifier):
-    product_number = 2
+    product_number = 1
     print("Starting Amazon")
     start = time.time()
 
@@ -672,7 +672,9 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
         if positive_count + negative_count == 0:
             positive_percentage = 0
         else:        
-            positive_percentage = positive_count / (positive_count + negative_count)   
+            positive_percentage = (positive_count / (positive_count + negative_count)) * 100
+            positive_percentage = "{:.1f}%".format(round(positive_percentage, 1))
+   
         comments_dict = {"positive_count": positive_count, "negative_count": negative_count, "most_positive_comment": most_positive_comment, "most_negative_comment": most_negative_comment, "positive_percentage": positive_percentage}
         
         # Add the comments to the product

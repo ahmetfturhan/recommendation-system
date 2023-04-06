@@ -98,37 +98,6 @@ body {
  }
   
   
-  .comment-popup{
-    cursor: pointer;
- }
-
- 
-
- .popup{
-  font-size: 18px;
-  position: absolute;
-  left: 450px;
-  width: auto;
-  height: auto;
-  background: #faa2a2;
-  padding: 8px;
-  box-sizing: content-box;
-  border: 1px solid #333; /* add a border */
-  border-radius: 4px;
-  visibility: hidden;
-  opacity: 0;
-  z-index: 9999; /* set a high z-index to ensure it appears on top of everything */
-}
-.comment-popup:hover .popup{
-  position: absolute;
-  
-  visibility: visible;
-  border: #333;
-  opacity: 1;
-}
-
-
-
 
   input[type="text"] {
     width: 400px;
@@ -185,7 +154,7 @@ body {
   width: 96%;
   height: auto;
   overflow-x: auto;
-  overflow-y: visible;
+  overflow-y: hidden;
   padding: 30px;
   overscroll-behavior-inline: contain;
   scroll-behavior: smooth;
@@ -205,7 +174,7 @@ body {
   height: auto;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
-  
+
   padding: 30px;
   overscroll-behavior-inline: contain;
 }
@@ -222,9 +191,9 @@ body {
   justify-content: center;
   align-items: center;
   height: auto;
+  width: 550px;
   scroll-snap-align: start;
-  
-
+  perspective: 500px;
 }
 
 h2 {
@@ -237,16 +206,19 @@ h2 {
   position: relative;
   flex-direction: row;
   flex-wrap: wrap;
-  width: 500px;
+  width: 100%;
   margin: 15px;
   box-shadow: 0 8px 12px 0 rgba(190, 188, 188, 0.466);
-  transition: 0.3s;
+  transition: transform 600ms ease;
+  transform-style: preserve-3d;
   border-radius: 10px;
   overflow: visible;
   border-width: 1px;
   border-color: rgb(150, 149, 149);
-  padding: 10px;
+  padding: 2px;
   height: auto;
+  overflow-y: hidden;
+  overflow-x: hidden;
  
 
 }
@@ -256,9 +228,33 @@ h2 {
   border-color: rgb(0, 0, 0);
   transform: scale(1.05);
   opacity: 1;
-  
 }
 
+.comment-btn{
+  position: relative;
+  z-index: 20;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+
+
+
+.frontside{
+  visibility: visible;
+  transition-delay: 0.25s;
+
+}
+
+.backside-comments{
+  position: absolute;
+  visibility: hidden;
+  transform: rotateY(180deg);
+  width: 100%;
+  height: 100%;
+  background: rgb(193, 195, 196);
+
+}
 .image_and_info{
   display: flex;
   flex-direction: row;
@@ -266,8 +262,9 @@ h2 {
 }
 .product_info{
   
-  margin-top: 22px;
-  padding-left: 24px;
+  margin-top: 25px;
+  padding-left: 20px;
+  padding-right: 7px;
   max-height: auto;
 }
 .amazon_button{
@@ -315,10 +312,18 @@ h2 {
   background-color: transparent;
 }
 
-.product_image{
+.product_image_amazon{
   height: 180px;
   zoom: 1.2;
-  margin-left: 10px;
+  margin: 24px;
+  max-width: 120px;
+  object-fit: scale-down;
+}
+
+.product_image_trendyol{
+  height: 160px;
+  zoom: 1.8;
+  margin: -4px;
   max-width: 120px;
   object-fit: scale-down;
 }
@@ -348,6 +353,32 @@ h2 {
   right: 0;
   background: linear-gradient(to left, #fff 0%, #fff);
 }
+
+.back_btn{
+  height: 40%;
+  z-index: 2;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  background: none;
+  margin-left: 5px;
+}
+
+.comments-btn{
+  background-color: white;
+  z-index: 2;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  margin-bottom: 1rem;
+  margin-left: -8px;
+}
+
+.comments-top{
+  display: flex;
+  justify-content: space-evenly;
+}
+
 
 .pre-btn img, .nxt-btn img{
   width: 20px;
