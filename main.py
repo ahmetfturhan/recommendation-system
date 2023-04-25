@@ -506,7 +506,7 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
     
 
 def amazon(amazon_product_list_main, brand, search_query, classifier):
-    product_number = 1
+    product_number = 4
     print("Starting Amazon")
     start = time.time()
 

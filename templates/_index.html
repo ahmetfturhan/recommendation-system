@@ -12,16 +12,7 @@
         {% for item in group %}
           <div class="card_box">
             <div class="card">
-              
-              <div class="backside-comments" >
-                <div class="comments-top" >
-                  <button class="back_btn" type="submit"><img src="/static/images/back.png" alt="" style="width: 25px;"></button>
-                  <h3 style="margin: auto; margin-top: -8px;">Comments</h3>
-                </div>
-                <div class="comments">
-
-                </div>
-              </div>
+          
               <div class="frontside">
                 <div class="image_and_info">
                   {% if item.website == "Amazon" %}
@@ -33,7 +24,7 @@
                     <p class="card-title" style="font-size: 17px;margin-bottom: 1rem;">{{ item["name"] }}</p>
                     <p class="card-text" style="margin-bottom: 1rem;margin-left: -4px;"><img class="price" src="/static/images/price.png" alt=""> Price: {{ item["price"] }} TL</p>
                     <button class="comment-btn" style="margin-bottom: 1rem;margin-left: -11px;border: none;background: none;"><p class="card-text"><img class="rate" src="/static/images/rate.png" alt=""> Rating: {{ item["rating"] }} ({{ item["rating_count"] }})</p></button>
-                    <p class="card-text" style="margin-bottom: 1rem;margin-left: -8px;"><img class="shipped" src="/static/images/shipped.png" alt=""> Seller: {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
+                    <p class="card-text" style="margin-bottom: 1rem;margin-left: -5px;"><img class="shipped" src="/static/images/shipped.png" alt=""> Seller: {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
                     {% if item.website == "Amazon" %}
                       <div>
                         <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
@@ -49,6 +40,33 @@
                     {% endif %}
                   </div>
                 </div>
+              </div>
+
+              <div class="backside-comments" >
+                <div class="comments-top" >
+                  <button class="back_btn" type="submit"><img src="/static/images/back.png" alt="" style="width: 25px;"></button>
+                  <h3 style="margin: auto;">Comments</h3>
+                </div>
+                <div class="comments">
+                  <div class="most-pos-comm">
+                    <p style="align-self: center;margin-top: 20px;font-weight: bold;">Positive Comment</p>
+                    <div class="img-and-comm"> 
+                      <img  class="user-img" src="/static/images/user.png" alt="">
+                      <p style="margin-top: 10px;">{{ item["comments"]["most_positive_comment"] }}</p>
+                    </div> 
+                  </div>
+                  <div class="most-pos-comm">
+                    <p style="align-self: center;margin-top: 20px;font-weight: bold;">Negative Comment</p>
+                    <div class="img-and-comm"> 
+                      <img  class="user-img" src="/static/images/user.png" alt="">
+                      <p style="margin-top: 10px;">{{ item["comments"]["most_negative_comment"] }}</p>
+                    </div> 
+                  </div>
+                </div> 
+              </div>
+
+              <div class="more_details">
+
               </div>
               
             </div>
@@ -69,12 +87,61 @@
   {% for item in not_matched_amazon %}
   <div class="card_box">
     <div class="card">
+      <div class="frontside">
+        <div class="image_and_info">
+          <img class="product_image_amazon" src="{{ item["image"] }}" alt="...">
+          <div class="product_info" style="font-size: 15px;">
+            <p class="card-title" style="font-size: 16px;margin-bottom: 1rem;">{{ item["name"] }}</p>
+            <p class="card-text" style="margin-bottom: 1rem;"><img class="price" src="/static/images/price.png" alt=""> Price: {{ item["price"] }} TL</p>
+            <button class="comment-btn" style="margin-bottom: 1rem;margin-left: -11px;border: none;background: none;"><p class="card-text"><img class="rate" src="/static/images/rate.png" alt=""> Rating: {{ item["rating"] }} ({{ item["rating_count"] }})</p></button>
+            <p class="card-text" style="margin-bottom: 1rem;"><img class="shipped" src="/static/images/shipped.png" alt=""> Seller: {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
+            {% if item.website == "Amazon" %}
+              <div>
+                <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
+                  <button class="amazon_button" type="submit"><img src="/static/images/amazon.png" alt=""></button>
+                </form>
+              </div>
+            {% else %}
+              <div>
+                <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
+                  <button class="trendyol_button" type="submit"><img src="/static/images/Trendyol_online.png" alt=""></button>
+                </form>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="backside-comments" >
+        <div class="comments-top" >
+          <button class="back_btn" type="submit"><img src="/static/images/back.png" alt="" style="width: 25px;"></button>
+          <h3 style="margin: auto; margin-top: -8px;">Comments</h3>
+        </div>
+        <div class="comments">
+
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+{% endblock %}
+
+
+{% block no_match_trendyol %}
+  {% if not_matched_trendyol|length != 0 %}
+    <h2 style="text-align: center; font-weight: bold;font-size: 17px;">More Products From Trendyol</h2>
+  {% endif %}
+
+  {% for item in not_matched_trendyol %}
+  <div class="card_box" >
+    <div class="card">
+      <div class="frontside">
       <div class="image_and_info">
-        <img class="product_image_amazon" src="{{ item["image"] }}" alt="...">
+        <img class="product_image_trendyol" src="{{ item["image"] }}" alt="...">
         <div class="product_info" style="font-size: 15px;">
           <p class="card-title" style="font-size: 16px;margin-bottom: 1rem;">{{ item["name"] }}</p>
           <p class="card-text" style="margin-bottom: 1rem;"><img class="price" src="/static/images/price.png" alt=""> Price: {{ item["price"] }} TL</p>
-          <p class="card-text" style="margin-bottom: 1rem;"><img class="rate" src="/static/images/rate.png" alt=""> Rating: {{ item["rating"] }} ({{ item["rating_count"] }})</p>
+          <button class="comment-btn" style="margin-bottom: 1rem;margin-left: -11px;border: none;background: none;"><p class="card-text"><img class="rate" src="/static/images/rate.png" alt=""> Rating: {{ item["rating"] }} ({{ item["rating_count"] }})</p></button>
           <p class="card-text" style="margin-bottom: 1rem;"><img class="shipped" src="/static/images/shipped.png" alt=""> Seller: {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
           {% if item.website == "Amazon" %}
             <div>
@@ -92,41 +159,18 @@
         </div>
       </div>
     </div>
-  </div>
-  {% endfor %}
-{% endblock %}
+    <div class="backside-comments" >
+      <div class="comments-top" >
+        <button class="back_btn" type="submit"><img src="/static/images/back.png" alt="" style="width: 25px;"></button>
+        <h3 style="margin: auto; margin-top: -8px;">Comments</h3>
+      </div>
+      <div class="comments">
+        <div class="most-pos-comm">
 
 
-{% block no_match_trendyol %}
-  {% if not_matched_trendyol|length != 0 %}
-    <h2 style="text-align: center; font-weight: bold;font-size: 17px;">More Products From Trendyol</h2>
-  {% endif %}
-
-  {% for item in not_matched_trendyol %}
-  <div class="card_box" >
-    <div class="card">
-      <div class="image_and_info">
-        <img class="product_image_trendyol" src="{{ item["image"] }}" alt="...">
-        <div class="product_info" style="font-size: 15px;">
-          <p class="card-title" style="font-size: 16px;margin-bottom: 1rem;">{{ item["name"] }}</p>
-          <p class="card-text" style="margin-bottom: 1rem;"><img class="price" src="/static/images/price.png" alt=""> Price: {{ item["price"] }} TL</p>
-          <p class="card-text" style="margin-bottom: 1rem;"><img class="rate" src="/static/images/rate.png" alt=""> Rating: {{ item["rating"] }} ({{ item["rating_count"] }})</p>
-          <p class="card-text" style="margin-bottom: 1rem;"><img class="shipped" src="/static/images/shipped.png" alt=""> Seller: {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
-          {% if item.website == "Amazon" %}
-            <div>
-              <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
-                <button class="amazon_button" type="submit"><img src="/static/images/amazon.png" alt=""></button>
-              </form>
-            </div>
-          {% else %}
-            <div>
-              <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
-                <button class="trendyol_button" type="submit"><img src="/static/images/Trendyol_online.png" alt=""></button>
-              </form>
-            </div>
-          {% endif %}
         </div>
       </div>
+    </div>
     </div>
   </div>
   {% endfor %}
