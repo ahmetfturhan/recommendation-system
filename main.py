@@ -180,13 +180,13 @@ def remove_items(test_list, item):
     return res
 
 def trendyol(trend_product_list_main, brand, search_query, classifier):
-    product_number = 1
+    product_number = 8
     print("Starting Trendyol")
     start = time.time()
     
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('disable-notifications')
-    # chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--headless')
     chrome_options.add_argument('--enable-gpu')
     browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
     browser.maximize_window()
@@ -393,7 +393,7 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
         
         # Wait for max 5 seconds to load the page
         try:
-            WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "rnr-com-tx")))
+            WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "search")))
         except TimeoutException:
             print("Couldn't scrape trendyol comments:, Timeout occured" )
 
@@ -506,7 +506,7 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
     
 
 def amazon(amazon_product_list_main, brand, search_query, classifier):
-    product_number = 4
+    product_number = 8
     print("Starting Amazon")
     start = time.time()
 
