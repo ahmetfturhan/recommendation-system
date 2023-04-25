@@ -46,8 +46,6 @@ class Product:
         self.starred_attributes = starred_attributes
 
 
-
-
 class Merchant:
     def __init__(self, name, rating, image, comments_link, product_rating, starred_attributes):
         self.name = name
@@ -56,6 +54,11 @@ class Merchant:
         self.comments_link = comments_link
         self.product_rating = product_rating
         self.starred_attributes = starred_attributes
+
+class Comment:
+    def __init__(self, comment_text, star):
+        self.comment_text = comment_text
+        self.star = star
 
 def match_similar(trproduct, amproduct, similarity_rate):
     first = remove_punctuation(trproduct)
@@ -183,7 +186,7 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
     
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('disable-notifications')
-    chrome_options.add_argument('--headless')
+    # chrome_options.add_argument('--headless')
     chrome_options.add_argument('--enable-gpu')
     browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
     browser.maximize_window()
@@ -392,8 +395,7 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
         try:
             WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, "rnr-com-tx")))
         except TimeoutException:
-            pass
-            print("Couldn't scrape trendyol comments:, Timeout occured", )
+            print("Couldn't scrape trendyol comments:, Timeout occured" )
 
         class_name = "null"
 
@@ -404,30 +406,46 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
         except NoSuchElementException:
             print("No such element: rnr-com-tx")
             try:
-                if browser.find_element(By.CLASS_NAME, "comment-text").is_displayed():
-                    class_name = "comment-text"
+                if browser.find_element(By.CLASS_NAME, "comment").is_displayed():
+                    class_name = "comment"
             except NoSuchElementException:
-                print("No such element: comment-text")
+                print("No such element: comment")
 
 
         trend_product_comments_list = []
 
         # Find the comments
         try:
-            trend_product_comments = browser.find_elements(By.XPATH, f'//div[contains(@class, "{class_name}")]/p')
+            trend_product_comments = browser.find_elements(By.XPATH, f'//div[@class="{class_name}"]')
         except TimeoutException:
-            print("Couldn't scrape trendyol comments:, Timeout occured", )
+            print("Couldn't scrape trendyol comments:, Timeout occured" )
 
-        # Loop through the comments
-        for j in trend_product_comments:
-            text = j.text
+        trend_product_comments_list = []
+        print(len(trend_product_comments))
+        for comment in trend_product_comments:
+            comment_text = ""
+            if class_name == "rnr-com-tx":
+                comment_text = comment.find_element(By.XPATH, f'.//p').text
+            else:
+                comment_text = comment.find_element(By.XPATH, f'.//div[contains(@class, "comment-text")]//p').text
+            text = " ".join(comment_text.split()[:100]) # get first 100 words
             # Remove emoji and emoticons from comments
             no_emoji = EMOJI_PATTERN.sub(r'', text) # no emoji
             no_emoji = EMOTICON_PATTERN.sub(r'', no_emoji) # no emoticon
 
-            # Append the comment to the list
-            trend_product_comments_list.append(no_emoji)
-            print("Trendyol Comment:", no_emoji)
+
+            star_counter = 0
+            stars = comment.find_elements(By.XPATH, f'.//div[contains(@class, "full")]')
+            for star in stars:
+                check_star = star.get_attribute("style")
+                if check_star == "width: 100%; max-width: 100%;":
+                    star_counter += 1
+            if star_counter == 0 or star_counter == 1:
+                star_counter =2
+            trend_product_comments_list.append(Comment(no_emoji, star_counter))
+            print("Trendyol Comment:", comment_text, "Star:", star_counter)
+
+
 
 
         # Analyze comments and count the number of positive and negative comments
@@ -435,20 +453,35 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
         most_positive_comment, positive_value = "", 0.0
         most_negative_comment, negative_value = "", 0.0
 
+        # TODO: Change the star to score values 0 gives key error for 1 star
+        star_to_score = {1: 0.0, 2: 0.2, 3: 0.4, 4: 0.8, 5: 1.0} # Convert star rating to score
+
+        '''
+        if the positive score falls between the [star to score - 1] and [star to score], then it is a valid comment
+        '''
+
         if class_name != "null":
             for review in trend_product_comments_list:
-                result = classifier(review)
-                if result[0]["label"] == "positive":
+                result = classifier(review.comment_text)
+                score = result[0]["score"]
+                review_star = review.star
+
+                if review.star == 1 or review.star == 0:
+                    review_star = 2
+
+                if result[0]["label"] == "positive" and star_to_score[review_star - 1] < score and score < star_to_score[review_star]:
                     if result[0]["score"] > positive_value:
                         positive_value = result[0]["score"]
-                        most_positive_comment = review
+                        most_positive_comment = review.comment_text
 
                     positive_count += 1
                 else:
-                    if result[0]["score"] > negative_value:
-                        negative_value = result[0]["score"]
-                        most_negative_comment = review
-                    negative_count += 1
+                    positive_score = 1 - result[0]["score"]
+                    if star_to_score[review_star - 1] < positive_score and positive_score < star_to_score[review_star]:
+                        if result[0]["score"] > negative_value:
+                            negative_value = result[0]["score"]
+                            most_negative_comment = review.comment_text
+                        negative_count += 1
 
         if positive_count + negative_count == 0:
             positive_percentage = 0
@@ -458,11 +491,11 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
         
         # Add the comments to the product
         i.comments = comments_dict
-        print("Comments:", comments_dict)
+        print("Trendyol Comments:", comments_dict)
 
 
     # Close the browser    
-    browser.quit()
+    # browser.quit()
 
     for it in trend_last_temp_list:
         trend_product_list_main.append(it)
@@ -590,7 +623,6 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
         amazon_merchant_list.append(new_merchant)
 
     for i, item in enumerate(amazon_product_list):
-        # TODO: Change the lsat 2 parameters, comments link and comments
         product_obj = Product(item.name, item.price, item.link, item.image, item.rating, item.rating_count, amazon_merchant_list[i].name, amazon_merchant_list[i].rating, item.website, amazon_merchant_list[i].comments_link, {}, {})
         amazon_temp_list.append(product_obj)
 
@@ -637,16 +669,28 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
                     EC.presence_of_element_located((By.XPATH, '//span[contains(@class, "a-size-base review-text review-text-content")]/span')))
 
             # get comments
+
             try:
-                amazon_product_comments = browser.find_elements(By.XPATH, '//span[contains(@class, "a-size-base review-text review-text-content")]/span')
-                for j in amazon_product_comments:
-                    text = " ".join(j.text.split()[:100]) # get first 100 words
+
+                amazon_product_comments = browser.find_elements(By.XPATH, '//div[contains(@class, "a-section review aok-relative")]')
 
                     
-                    no_emoji = EMOJI_PATTERN.sub(r'', text) # no emoji
+                for j in amazon_product_comments:
+                    comment_text = j.find_element(By.XPATH, f'.//span[contains(@class, "a-size-base review-text review-text-content")]/span').text
+                    star = j.find_element(By.XPATH, f'.//i[contains(@data-hook, "review-star-rating")]').get_attribute("class")
+                    match = re.search(r"\d", star)
+                    if match:
+                        star = int(match.group())
+
+                    comment_text = " ".join(comment_text.split()[:100])
+
+                    
+                    no_emoji = EMOJI_PATTERN.sub(r'', comment_text) # no emoji
                     no_emoji = EMOTICON_PATTERN.sub(r'', no_emoji) # no emoticon
 
-                    amazon_product_comments_list.append(no_emoji)
+                    new_comment = Comment(no_emoji, star)
+
+                    amazon_product_comments_list.append(new_comment)
             except Exception as e:
                 print("Couldn't scrape comments", e)
 
@@ -656,30 +700,42 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
         most_positive_comment, positive_value = "", 0.0
         most_negative_comment, negative_value = "", 0.0
 
+        star_to_score = {1: 0.0, 2: 0.2, 3: 0.4, 4: 0.8, 5: 1.0} # Convert star rating to score
+
+        '''
+        if the positive score falls between the [star to score - 1] and [star to score], then it is a valid comment
+        '''
+
         for review in amazon_product_comments_list:
-            result = classifier(review)
-            if result[0]["label"] == "positive":
+            result = classifier(review.comment_text)
+            score = result[0]["score"]
+            review_star = review.star
+            if review_star == 1:
+                review_star = 2
+
+            if result[0]["label"] == "positive" and star_to_score[review_star - 1] < score and score < star_to_score[review_star]:
                 if result[0]["score"] > positive_value:
                     positive_value = result[0]["score"]
-                    most_positive_comment = review
+                    most_positive_comment = review.comment_text
 
                 positive_count += 1
             else:
-                if result[0]["score"] > negative_value:
-                    negative_value = result[0]["score"]
-                    most_negative_comment = review
-                negative_count += 1
+                positive_score = 1 - result[0]["score"]
+                if star_to_score[review_star - 1] < positive_score and positive_score < star_to_score[review_star]:
+                    if result[0]["score"] > negative_value:
+                        negative_value = result[0]["score"]
+                        most_negative_comment = review.comment_text
+                    negative_count += 1
+
         if positive_count + negative_count == 0:
             positive_percentage = 0
         else:        
-            positive_percentage = (positive_count / (positive_count + negative_count)) * 100
-            positive_percentage = "{:.1f}%".format(round(positive_percentage, 1))
-   
+            positive_percentage = positive_count / (positive_count + negative_count)     
         comments_dict = {"positive_count": positive_count, "negative_count": negative_count, "most_positive_comment": most_positive_comment, "most_negative_comment": most_negative_comment, "positive_percentage": positive_percentage}
         
         # Add the comments to the product
         i.comments = comments_dict
-        print("Comments:", comments_dict)
+        print("Amazon Comments:", comments_dict)
     
     for it in amazon_last_temp_list:
         amazon_product_list_main.append(it)   
