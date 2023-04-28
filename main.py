@@ -426,10 +426,10 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
         print(len(trend_product_comments))
         for comment in trend_product_comments:
             comment_text = ""
-            if class_name == "rnr-com-tx":
-                comment_text = comment.find_element(By.XPATH, f'.//p').text
-            else:
+            if class_name == "comment":
                 comment_text = comment.find_element(By.XPATH, f'.//div[contains(@class, "comment-text")]//p').text
+            else:
+                comment_text = comment.find_element(By.XPATH, f'.//p').text
             text = " ".join(comment_text.split()[:100]) # get first 100 words
             # Remove emoji and emoticons from comments
             no_emoji = EMOJI_PATTERN.sub(r'', text) # no emoji
@@ -492,8 +492,7 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
         if positive_count + negative_count == 0:
             positive_percentage = 0
         else:        
-            positive_percentage = positive_count / (positive_count + negative_count)
-            positive_percentage = round(positive_percentage * 100, 2)
+            positive_percentage = positive_count / (positive_count + negative_count)     
         comments_dict = {"positive_count": positive_count, "negative_count": negative_count, "most_positive_comment": most_positive_comment, "most_negative_comment": most_negative_comment, "positive_percentage": positive_percentage}
         
         # Add the comments to the product
@@ -742,8 +741,7 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
         if positive_count + negative_count == 0:
             positive_percentage = 0
         else:        
-            positive_percentage = positive_count / (positive_count + negative_count)   
-            positive_percentage = round(positive_percentage * 100, 2)  
+            positive_percentage = positive_count / (positive_count + negative_count)     
         comments_dict = {"positive_count": positive_count, "negative_count": negative_count, "most_positive_comment": most_positive_comment, "most_negative_comment": most_negative_comment, "positive_percentage": positive_percentage}
         
         # Add the comments to the product
