@@ -492,7 +492,8 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
         if positive_count + negative_count == 0:
             positive_percentage = 0
         else:        
-            positive_percentage = positive_count / (positive_count + negative_count)     
+            positive_percentage = positive_count / (positive_count + negative_count)
+            positive_percentage = round(positive_percentage * 100, 2)
         comments_dict = {"positive_count": positive_count, "negative_count": negative_count, "most_positive_comment": most_positive_comment, "most_negative_comment": most_negative_comment, "positive_percentage": positive_percentage}
         
         # Add the comments to the product
@@ -741,7 +742,8 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
         if positive_count + negative_count == 0:
             positive_percentage = 0
         else:        
-            positive_percentage = positive_count / (positive_count + negative_count)     
+            positive_percentage = positive_count / (positive_count + negative_count)   
+            positive_percentage = round(positive_percentage * 100, 2)  
         comments_dict = {"positive_count": positive_count, "negative_count": negative_count, "most_positive_comment": most_positive_comment, "most_negative_comment": most_negative_comment, "positive_percentage": positive_percentage}
         
         # Add the comments to the product
