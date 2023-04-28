@@ -351,6 +351,10 @@ h2 {
   
 }
 
+.posNegRatio{
+  align-self: center;
+}
+
 .pre-btn, .nxt-btn{
   top: 100px;
   width: 5%;
