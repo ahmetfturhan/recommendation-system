@@ -188,6 +188,8 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
     chrome_options.add_argument('disable-notifications')
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--enable-gpu')
+    chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    
     browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
     browser.maximize_window()
     
@@ -443,7 +445,7 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
             if star_counter == 0 or star_counter == 1:
                 star_counter =2
             trend_product_comments_list.append(Comment(no_emoji, star_counter))
-            print("Trendyol Comment:", comment_text, "Star:", star_counter)
+            # print("Trendyol Comment:", comment_text, "Star:", star_counter)
 
 
 
@@ -464,24 +466,28 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
             for review in trend_product_comments_list:
                 result = classifier(review.comment_text)
                 score = result[0]["score"]
-                review_star = review.star
+                
+                upper_bound = 1.0
+                lower_bound = 0.4
 
-                if review.star == 1 or review.star == 0:
-                    review_star = 2
+                if review.star <=3:
+                    upper_bound = 0.5
+                    lower_bound = 0.0
 
-                if result[0]["label"] == "positive" and star_to_score[review_star - 1] < score and score < star_to_score[review_star]:
+
+                if result[0]["label"] == "positive" and lower_bound < score and score < upper_bound:
                     if result[0]["score"] > positive_value:
                         positive_value = result[0]["score"]
                         most_positive_comment = review.comment_text
 
-                    positive_count += 1
+                        positive_count += 1
                 else:
                     positive_score = 1 - result[0]["score"]
-                    if star_to_score[review_star - 1] < positive_score and positive_score < star_to_score[review_star]:
+                    if lower_bound < positive_score and positive_score < upper_bound:
                         if result[0]["score"] > negative_value:
                             negative_value = result[0]["score"]
                             most_negative_comment = review.comment_text
-                        negative_count += 1
+                            negative_count += 1
 
         if positive_count + negative_count == 0:
             positive_percentage = 0
@@ -515,13 +521,15 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
     chrome_options.add_argument('--enable-gpu')
     chrome_options.add_argument('disable-notifications')
 
-    service_obj = Service(rf"C:\Users\ahmet\AppData\Local\Programs\Python\Python39\chromedriver.exe")
+    # service_obj = Service(rf"C:\Users\ahmet\AppData\Local\Programs\Python\Python39\chromedriver.exe")
 
     chrome_options.add_experimental_option("useAutomationExtension", False)
-    chrome_options.add_experimental_option("excludeSwitches",["enable-automation"])
+    chrome_options.add_experimental_option("excludeSwitches",["enable-automation", "enable-logging"])
 
 
-    browser = webdriver.Chrome('chromedriver.exe', options=chrome_options, service=service_obj)
+    browser = webdriver.Chrome('chromedriver.exe', options=chrome_options)
+
+    # browser = webdriver.Chrome('chromedriver.exe', options=chrome_options, service=service_obj)
     browser.maximize_window()
 
 
@@ -647,7 +655,7 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
         if i.comments_link == 0:
             continue
         
-        print("Comments Link:", i.comments_link)
+        # print("Comments Link:", i.comments_link)
         # Go to the comments page
         amazon_product_comments_list = []
 
@@ -671,9 +679,7 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
             # get comments
 
             try:
-
                 amazon_product_comments = browser.find_elements(By.XPATH, '//div[contains(@class, "a-section review aok-relative")]')
-
                     
                 for j in amazon_product_comments:
                     comment_text = j.find_element(By.XPATH, f'.//span[contains(@class, "a-size-base review-text review-text-content")]/span').text
@@ -709,23 +715,28 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
         for review in amazon_product_comments_list:
             result = classifier(review.comment_text)
             score = result[0]["score"]
-            review_star = review.star
-            if review_star == 1:
-                review_star = 2
+  
+            upper_bound = 1.0
+            lower_bound = 0.4
 
-            if result[0]["label"] == "positive" and star_to_score[review_star - 1] < score and score < star_to_score[review_star]:
+            if review.star <=3:
+                upper_bound = 0.5
+                lower_bound = 0.0
+
+
+            if result[0]["label"] == "positive" and lower_bound < score and score < upper_bound:
                 if result[0]["score"] > positive_value:
                     positive_value = result[0]["score"]
                     most_positive_comment = review.comment_text
 
-                positive_count += 1
+                    positive_count += 1
             else:
                 positive_score = 1 - result[0]["score"]
-                if star_to_score[review_star - 1] < positive_score and positive_score < star_to_score[review_star]:
+                if lower_bound < positive_score and positive_score < upper_bound:
                     if result[0]["score"] > negative_value:
                         negative_value = result[0]["score"]
                         most_negative_comment = review.comment_text
-                    negative_count += 1
+                        negative_count += 1
 
         if positive_count + negative_count == 0:
             positive_percentage = 0
