@@ -1,6 +1,18 @@
 {% extends '_base.html' %}
 
 {% block groups %}
+  <form action="/order">
+    <label for="order-by">Order By</label>
+    <select name="order" id="order-dropdown">
+      <option value="recommended">Recommended</option>
+      <option value="lowest">Price: Low to High</option>
+      <option value="highest">Price: High to Low</option>
+      <option value="rating">User Rating</option>
+      <option value="comment">Most Comments</option>
+    </select>
+    <input type="submit" value="Go">
+
+  </form>
   {% for group in matched %}
     <div class="card_list">
       <div class="buttonsAndLabel">
@@ -50,14 +62,14 @@
                 <p class="posNegRatio">{{ item["comments"]["positive_percentage"] }}% of the comments were positive about this product!</p>
                 <div class="comments">
                   <div class="most-pos-comm">
-                    <p style="align-self: flex-start;margin-top: 20px;font-weight: bold;margin-left: 12px;">Positive Comment</p>
+                    <p style="align-self: flex-start;margin-top: 35px;font-weight: bold;margin-left: 12px;">Positive Comment</p>
                     <div class="img-and-comm"> 
                       <img  class="user-img" src="/static/images/user.png" alt="">
                       <p style="margin-top: 10px;">{{ item["comments"]["most_positive_comment"] }}</p>
                     </div> 
                   </div>
                   <div class="most-pos-comm">
-                    <p style="align-self: flex-start;margin-top: 20px;font-weight: bold;margin-left: 12px;">Negative Comment</p>
+                    <p style="align-self: flex-start;margin-top: 35px;font-weight: bold;margin-left: 12px;">Negative Comment</p>
                     <div class="img-and-comm"> 
                       <img  class="user-img" src="/static/images/user.png" alt="">
                       <p style="margin-top: 10px;">{{ item["comments"]["most_negative_comment"] }}</p>
@@ -121,14 +133,14 @@
         <p class="pos&negRatio">{{ item["positive_percentage"] }}% of the comments were positive about this product!</p>
         <div class="comments">
           <div class="most-pos-comm">
-            <p style="align-self: flex-start;margin-top: 20px;font-weight: bold;margin-left: 12px;">Positive Comment</p>
+            <p style="align-self: flex-start;margin-top: 35px;font-weight: bold;margin-left: 12px;">Positive Comment</p>
             <div class="img-and-comm"> 
               <img  class="user-img" src="/static/images/user.png" alt="">
               <p style="margin-top: 10px;">{{ item["comments"]["most_positive_comment"] }}</p>
             </div> 
           </div>
           <div class="most-pos-comm">
-            <p style="align-self: flex-start;margin-top: 20px;font-weight: bold;margin-left: 12px;">Negative Comment</p>
+            <p style="align-self: flex-start;margin-top: 35px;font-weight: bold;margin-left: 12px;">Negative Comment</p>
             <div class="img-and-comm"> 
               <img  class="user-img" src="/static/images/user.png" alt="">
               <p style="margin-top: 10px;">{{ item["comments"]["most_negative_comment"] }}</p>
@@ -182,14 +194,14 @@
       <p class="pos&negRatio">{{ item["positive_percentage"] }}% of the comments were positive about this product!</p>
       <div class="comments">
         <div class="most-pos-comm">
-          <p style="align-self: flex-start;margin-top: 20px;font-weight: bold;margin-left: 12px;">Positive Comment</p>
+          <p style="align-self: flex-start;margin-top: 35px;font-weight: bold;margin-left: 12px;">Positive Comment</p>
           <div class="img-and-comm"> 
             <img  class="user-img" src="/static/images/user.png" alt="">
             <p style="margin-top: 10px;">{{ item["comments"]["most_positive_comment"] }}</p>
           </div> 
         </div>
         <div class="most-pos-comm">
-          <p style="align-self: flex-start;margin-top: 20px;font-weight: bold;margin-left: 12px;">Negative Comment</p>
+          <p style="align-self: flex-start;margin-top: 35px;font-weight: bold;margin-left: 12px;">Negative Comment</p>
           <div class="img-and-comm"> 
             <img  class="user-img" src="/static/images/user.png" alt="">
             <p style="margin-top: 10px;">{{ item["comments"]["most_negative_comment"] }}</p>

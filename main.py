@@ -180,7 +180,7 @@ def remove_items(test_list, item):
     return res
 
 def trendyol(trend_product_list_main, brand, search_query, classifier):
-    product_number = 8
+    product_number = 3
     print("Starting Trendyol")
     start = time.time()
     
@@ -274,7 +274,7 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
                 print("Couldn't get price", e)
         if trend_product_price != 0:
             trend_product_price = trend_product_price.replace("TL", "")
-            trend_product_price = (trend_product_price.replace(",", ".")).strip()
+            trend_product_price = (trend_product_price.split(",")[0]).strip()
 
         # get links
         try:
@@ -512,7 +512,7 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
     
 
 def amazon(amazon_product_list_main, brand, search_query, classifier):
-    product_number = 8
+    product_number = 2
     print("Starting Amazon")
     start = time.time()
 

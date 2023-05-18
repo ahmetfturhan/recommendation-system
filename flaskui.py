@@ -3,6 +3,9 @@ from flask import render_template
 import subprocess
 import json
 
+
+DATA_PREFIX = "./data/"
+
 app = Flask(__name__)
 
 class Merchant:
@@ -10,28 +13,8 @@ class Merchant:
         self.name = name
         self.rating = rating
 
-@app.route('/')
-def welcome():
-    return render_template('_base.html')
 
-@app.route('/search', methods=['POST'])
-def search():
-  query = request.form['query']
-  brand = request.form['brand']
-  # Do something with the query here, such as storing it in a database or using it to search for something
-  return redirect(url_for('index', query=query, brand=brand))
-
-@app.route('/index')
-def index():
-    DATA_PREFIX = "./data/"
-    search_query = request.args.get('query')
-    brand = request.args.get('brand')
-    # Use the query here to search for something or display it to the user
-    search_query = search_query.replace(" ", "+")
-    brand = brand.replace(" ", "+")
-    subprocess.call(f'python main.py --arg1 {search_query} --arg2 {brand}', shell=True)
-    #subprocess.call(["python", "main.py", "--arg1", search_query, "--arg2", brand])
-
+def LoadProducts():
     f = open(DATA_PREFIX + "amazon.txt", "r", encoding="utf-8")
     amazontxt = f.readlines()
     f.close()
@@ -99,6 +82,57 @@ def index():
     for counter, i in enumerate(no_groups):
 
         labels.append(json.loads(i))
+
+    return matched, not_matched_amazon, not_matched_trendyol, labels
+
+
+@app.route('/')
+def welcome():
+    return render_template('_base.html')
+
+@app.route('/search', methods=['POST'])
+def search():
+  query = request.form['query']
+  brand = request.form['brand']
+  # Do something with the query here, such as storing it in a database or using it to search for something
+  return redirect(url_for('index', query=query, brand=brand))
+
+@app.route('/index')
+def index():
+    search_query = request.args.get('query')
+    brand = request.args.get('brand')
+    # Use the query here to search for something or display it to the user
+    search_query = search_query.replace(" ", "+")
+    brand = brand.replace(" ", "+")
+    subprocess.call(f'python main.py --arg1 {search_query} --arg2 {brand}', shell=True)
+
+    matched, not_matched_amazon, not_matched_trendyol, labels = LoadProducts()
+
+    return render_template('_index.html', matched=matched, not_matched_amazon=not_matched_amazon, not_matched_trendyol=not_matched_trendyol, labels=labels)
+
+@app.route('/order', methods=['GET', 'POST'])
+def order():
+    matched, not_matched_amazon, not_matched_trendyol, labels = LoadProducts()
+    ordering_method = request.args.get('order')
+
+    if ordering_method == "lowest":
+        for i in matched:
+            i.sort(key=lambda x: int(x["price"].replace(".", "")))
+
+    elif ordering_method == "highest":
+        for i in matched:
+            i.sort(key=lambda x: int(x["price"].replace(".", "")), reverse=True) 
+
+    elif ordering_method == "rating":
+        for i in matched:
+            i.sort(key=lambda x: x["rating"], reverse=True)      
+    
+    elif ordering_method == "comment":
+        for i in matched:
+            i.sort(key=lambda x: (x["comments"]["positive_count"] + x["comments"]["negative_count"]), reverse=True)
+    
+    elif ordering_method == "recommended":
+        matched, not_matched_amazon, not_matched_trendyol, labels = LoadProducts()
 
 
     return render_template('_index.html', matched=matched, not_matched_amazon=not_matched_amazon, not_matched_trendyol=not_matched_trendyol, labels=labels)
