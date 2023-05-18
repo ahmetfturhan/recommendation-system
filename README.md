@@ -8,20 +8,20 @@ It accepts a search query and a brand query from the user and uses these paramet
 
 Scrapes the products from these websites and finally displays the processed results in a simple --yet effective GUI.
 
-## Important Features
-- Sentiment Analysis
+## Important Features  
+### Sentiment Analysis  
 Product reviews are analyzed with a Huggingface Sentiment Analysis Model.
 
-- Grouping
+### **Grouping**  
 Groups are created from the products based on the product description. This enables a better and more organized shopping experience. User can browse the groups by looking at their labels.
 
-- Filtering
+### **Filtering**  
 Low quality products are filtered, so the user can find exactly what they want.
 
-- Ranking
+### **Ranking**  
 All products are ranked with a custom ranking formula, this ensures that high-quality products take first positions in the groups.
 
-- Simple GUI
+### **Simple GUI**  
 Product Cards are designed to be simple and effective. Starred Attributes and most positive&negative comments can be found in the product cards.
 
 ## Implementation
