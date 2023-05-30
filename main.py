@@ -403,16 +403,15 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
 
         # Trendyol has 2 different templates for the comment page
         try:
-            if browser.find_element(By.CLASS_NAME, "rnr-com-tx").is_displayed():
-                class_name = "rnr-com-tx"
+            if browser.find_element(By.CLASS_NAME, "comment").is_displayed():
+                class_name = "comment"
         except NoSuchElementException:
-            print("No such element: rnr-com-tx")
+            print("No such element: comment")
             try:
-                if browser.find_element(By.CLASS_NAME, "comment").is_displayed():
-                    class_name = "comment"
+                if browser.find_element(By.CLASS_NAME, "rnr-com-tx").is_displayed():
+                    class_name = "rnr-com-tx"
             except NoSuchElementException:
-                print("No such element: comment")
-
+                print("No such element: rnr-com-tx")
 
         trend_product_comments_list = []
 
@@ -431,6 +430,7 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
             else:
                 comment_text = comment.find_element(By.XPATH, f'.//p').text
             text = " ".join(comment_text.split()[:100]) # get first 100 words
+
             # Remove emoji and emoticons from comments
             no_emoji = EMOJI_PATTERN.sub(r'', text) # no emoji
             no_emoji = EMOTICON_PATTERN.sub(r'', no_emoji) # no emoticon
@@ -461,12 +461,13 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
         '''
         if the positive score falls between the [star to score - 1] and [star to score], then it is a valid comment
         '''
-
+        temp_comments = []
         if class_name != "null":
             for review in trend_product_comments_list:
                 result = classifier(review.comment_text)
                 score = result[0]["score"]
-                
+
+                temp_comments.append(Comment(review.comment_text, score))
                 upper_bound = 1.0
                 lower_bound = 0.4
 
@@ -489,10 +490,21 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
                             most_negative_comment = review.comment_text
                             negative_count += 1
 
+        if most_negative_comment == "":
+            temp_comments = sorted(temp_comments, key=lambda x: x.star)
+            if temp_comments[0].star <= 0.43:
+                most_negative_comment = temp_comments[0].comment_text
+
+        if most_positive_comment == "":
+            temp_comments = sorted(temp_comments, key=lambda x: x.star, reverse=True)
+            if temp_comments[0].star >= 0.48:
+                most_positive_comment = temp_comments[0].comment_text
+
         if positive_count + negative_count == 0:
             positive_percentage = 0
+
         else:        
-            positive_percentage = positive_count / (positive_count + negative_count)     
+            positive_percentage = round((positive_count / (positive_count + negative_count)), 2 ) * 100
         comments_dict = {"positive_count": positive_count, "negative_count": negative_count, "most_positive_comment": most_positive_comment, "most_negative_comment": most_negative_comment, "positive_percentage": positive_percentage}
         
         # Add the comments to the product
@@ -517,7 +529,7 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
     start = time.time()
 
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument('--headless')
+    # chrome_options.add_argument('--headless')
     chrome_options.add_argument('--enable-gpu')
     chrome_options.add_argument('disable-notifications')
 
@@ -711,11 +723,13 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
         '''
         if the positive score falls between the [star to score - 1] and [star to score], then it is a valid comment
         '''
+        temp_comments = []
 
         for review in amazon_product_comments_list:
             result = classifier(review.comment_text)
             score = result[0]["score"]
-  
+            temp_comments.append(Comment(review.comment_text, score))
+
             upper_bound = 1.0
             lower_bound = 0.4
 
@@ -738,10 +752,20 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
                         most_negative_comment = review.comment_text
                         negative_count += 1
 
+        if most_negative_comment == "":
+            temp_comments = sorted(temp_comments, key=lambda x: x.star)
+            if temp_comments[0].star <= 0.43:
+                most_negative_comment = temp_comments[0].comment_text
+
+        if most_positive_comment == "":
+            temp_comments = sorted(temp_comments, key=lambda x: x.star, reverse=True)
+            if temp_comments[0].star >= 0.48:
+                most_positive_comment = temp_comments[0].comment_text
+
         if positive_count + negative_count == 0:
             positive_percentage = 0
         else:        
-            positive_percentage = positive_count / (positive_count + negative_count)     
+            positive_percentage = round((positive_count / (positive_count + negative_count)), 2)*100
         comments_dict = {"positive_count": positive_count, "negative_count": negative_count, "most_positive_comment": most_positive_comment, "most_negative_comment": most_negative_comment, "positive_percentage": positive_percentage}
         
         # Add the comments to the product
