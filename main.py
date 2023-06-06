@@ -536,6 +536,7 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument('--headless')
     chrome_options.add_argument('--enable-gpu')
     chrome_options.add_argument('disable-notifications')
 
