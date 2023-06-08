@@ -147,6 +147,12 @@ body {
 }
 
 
+.Buttons{
+  display: flex;
+  width: 100px;
+  justify-content: space-between;
+}
+
 .card_container {
   position: relative;
   flex: none;
