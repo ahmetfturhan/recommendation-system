@@ -1,23 +1,25 @@
 {% extends '_base.html' %}
 
 {% block groups %}
-  <form action="/order">
-    <label for="order-by">Order By</label>
-    <select name="order" id="order-dropdown">
-      <option value="recommended">Recommended</option>
-      <option value="lowest">Price: Low to High</option>
-      <option value="highest">Price: High to Low</option>
-      <option value="rating">User Rating</option>
-      <option value="comment">Comments</option>
-    </select>
-    <input type="submit" value="Go">
+<form action="/order" class="order-form">
+  <label for="order-by">Order By</label>
+  <select name="order" id="order-dropdown" class="order-dropdown">
+    <option value="recommended">Recommended</option>
+    <option value="lowest">Price: Low to High</option>
+    <option value="highest">Price: High to Low</option>
+    <option value="rating">User Rating</option>
+    <option value="comment">Comments</option>
+  </select>
+  <input type="submit" value="Go" class="order-submit">
+</form>
 
-  </form>
   {% for group in matched %}
     <div class="card_list">
       <div class="buttonsAndLabel">
+        <div class="Buttons">
         <button class="pre-btn"><img src="/static/images/back.png" alt=""></button>
         <button class="nxt-btn"><img src="/static/images/back.png" alt=""></button>
+      </div>
         <div class="group_labels">{{ labels[loop.index0]["name"] }}</div>
       </div>
       <div class="card_container">

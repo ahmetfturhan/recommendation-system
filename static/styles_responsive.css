@@ -1,0 +1,83 @@
+@media (max-width: 400px) {
+   
+    /* Add your mobile styles here */
+    .search_bar {
+        width: 290px !important;
+        height: 30px;
+    }
+
+    .logoAndHeader{
+        margin-right: 0px !important;
+        padding-right: 0px !important;
+        flex-direction: row !important;
+    }
+
+    nav{
+        display: block !important;
+    }
+
+    .nav_info{
+        display: none !important;
+    }
+
+    .logo {
+        width: 40px !important;
+        height: 40px    !important;
+    }
+
+    .W_Header {
+        font-size: 14px !important;
+        cursor: default !important;
+    }
+
+    .search{
+        display:flex !important;
+        flex-direction: column !important;
+    }
+
+    .Submit {
+        width: 50px !important;
+        height: 30px   !important;
+    }
+
+    .brandAndSearch{
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+    }
+    .info_header{
+        font-size: 20px;
+    }
+
+    .warning{
+        font-size: 12px;
+    }
+
+    .pre-btn img, .nxt-btn img {
+        width: 10px !important;
+        height: 15px    !important;
+  
+    }
+
+    .group_labels {
+        font-size: 15px !important;
+    }
+
+    .product_info{
+        font-size: 13px !important;
+    }
+
+    .card_box{
+        width: 370px !important;
+      }
+
+    .card-title{
+        font-size: 13px !important;
+    }
+
+    .product_image_trendyol {
+        height: 100px !important;
+        zoom: 2 !important;
+  }
+
+} 

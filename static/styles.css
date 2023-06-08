@@ -147,6 +147,12 @@ body {
 }
 
 
+.Buttons{
+  display: flex;
+  width: 100px;
+  justify-content: space-between;
+}
+
 .card_container {
   position: relative;
   flex: none;
@@ -457,60 +463,56 @@ h2 {
 }
 
 
-.filter-form {
+/* Example CSS styles for the order form */
+
+.order-form {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  gap: 10px;
+  margin-bottom: 30px;
+  margin-top: 20px;
 }
 
-.filter-label {
-  font-size: 16px;
-  color: #333;
-  margin-right: 10px;
-}
-
-.filter-select {
-  padding: 8px 12px;
-  font-size: 14px;
-  color: #666;
+.order-dropdown {
+  padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  background-color: #f2f2f2;
-  cursor: pointer;
+  background-color: #fff;
+  font-size: 15px;
+  color: #333;
+  transition: border-color 0.3s ease;
 }
 
-.filter-submit {
-  padding: 8px 16px;
-  font-size: 14px;
-  color: #fff;
+.order-dropdown:hover {
+  border-color: #888;
+}
+
+.order-submit {
+  padding: 8px 12px;
+  background-color: #f36d00;
   border: none;
   border-radius: 4px;
-  background-color: #007bff;
+  color: #fff;
+  font-size: 14px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.filter-submit:hover {
-  background-color: #0056b3;
+.order-submit:hover {
+  background-color: #863405;
 }
 
-.filter-submit:focus {
-  outline: none;
+
+/* Example CSS styles for the dropdown options */
+
+.order-dropdown option {
+  transition: background-color 0.3s ease;
 }
 
-/* Optional: If you want to align the elements vertically on smaller screens */
-@media (max-width: 480px) {
-  .filter-form {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .filter-label {
-    margin-bottom: 10px;
-  }
-  
-  .filter-select {
-    margin-bottom: 10px;
-  }
+.order-dropdown option:hover {
+  background-color: #f2f2f2;
+  transform: scale(1.05);
 }
+
 
 

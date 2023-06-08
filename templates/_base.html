@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.cdnfonts.com/css/amazon-ember" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles_responsive.css')}}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css')}}">
   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
   <link href='https://unpkg.com/css.gg@2.0.0/icons/css/search.css' rel='stylesheet'>
@@ -19,14 +20,19 @@
           <img class="logo" src="/static/images/logo.png" alt="">
           <h1 class="W_Header">S & R</h1>
           </div>
-        <div class=""></div>
+
           <form action="/search" method="post">
-          
-            <input id="searchBar" class = "search_bar" type="text"  name="query" placeholder="Search for products..." required>
-          <input id="searchBar" class = "search_bar" type="text"  name="brand" placeholder="Enter the brand" required>
+            <div class="search" style="display: flex; flex-direction: row;">
+
+            <input class = "search_bar" id="searchBar"  type="text"  name="query" placeholder="Search for products..." required>
+          <div class="brandAndSearch">
+          <input class = "search_bar" id="searchBar"  type="text"  name="brand" placeholder="Enter the brand" required>
           <button class="Submit" type="submit"><i class="gg-search" style="margin-left: 7px;"></i></button>
-          
-          </form>
+        </div>
+        </div>
+  
+        </form>
+
     
     <div class="nav_info">
         <a style="font-family: 'Source Sans Pro', sans-serif;"href="#">Home</a> |
@@ -46,11 +52,11 @@
 
 <div class="container-fluid justify-content-between">
   <div class="row">
-    <div class="col justify-content-center" style="display: flex;flex-direction: column;align-items: center;">
+    <div class="col justify-content-center" style="display: flex;flex-direction: column;align-items: center;justify-content: flex-start !important;">
         {% block no_match_amazon %} {% endblock %}
 
     </div>
-    <div class="col justify-content-center" style="display: flex;flex-direction: column;align-items: center;">
+    <div class="col justify-content-center" style="display: flex;flex-direction: column;align-items: center;justify-content: flex-start !important;">
 
       {% block no_match_trendyol %} {% endblock %}
 
