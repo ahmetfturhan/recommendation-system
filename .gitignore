@@ -145,3 +145,5 @@ asda.py
 
 /dev
 /data
+
+/__pycache__

@@ -1,0 +1,10 @@
+.__pycache__
+.Dockerfile
+.myenv
+.jsonn
+.gitignore
+.asda.py
+.deneme.py
+.flasktemp.py
+.LICENSE
+.dev
