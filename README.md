@@ -32,11 +32,16 @@ GUI is made with HTML, CSS, Javascript and Bootstrap 5.
 
 
 ## Running the App
-ChromeDriver needs to be installed from here: https://chromedriver.chromium.org/
+~~ChromeDriver needs to be installed from here: https://chromedriver.chromium.org/~~  
+*ChromeDriver will be automatically installed.*
 
-Clone the repository and run the following codes in terminal;
-```  pip install -r requirements.txt ```
-``` flask --app flaskui run ```
+Clone the repository and run the following codes in terminal;  
+``` pip install -r requirements.txt ```  
+``` flask --app flaskui run ```  
 
 ## Running w/ Docker
-***Soon***
+Build the image  
+``` docker build --tag sr-app . ```  
+  
+Create a container from the image  
+``` docker run --shm-size="2g" -p 5000:5000 sr-app ```  
