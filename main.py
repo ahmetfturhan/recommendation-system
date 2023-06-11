@@ -556,10 +556,11 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
     WebDriverWait(browser, delay).until(EC.element_to_be_clickable(("xpath", '//*[@id="sp-cc-accept"]')))
 
     # WebDriverWait(browser, delay).until(EC.presence_of_element_located(("xpath", '//*[@id="sp-cc-accept"]')))
-    logging.info("Amazon Cookies Accepted")
 
     # Click on the cookies button
     browser.find_element("xpath", '//*[@id="sp-cc-accept"]').click()
+
+    logging.info("Amazon Cookies Accepted")
 
     # browser.implicitly_wait(2)
     WebDriverWait(browser, delay).until(EC.presence_of_element_located(("xpath", '//*[@id="brandsRefinements"]')))
@@ -638,17 +639,41 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
         except:
             merchant_name = "Amazon.com.tr"   
         
-
+        # Get reviews link
         try:
             reviews_link = browser.find_element(By.XPATH, '//a[contains(@data-hook, "see-all-reviews-link-foot")]').get_attribute("href")
         except:
             reviews_link = 0
 
-        new_merchant = Merchant(merchant_name, 0, 0, reviews_link, 0, {})
+        # Get starred attributes
+        attributes_dict = {}
+
+        try:
+            starred_attributes = browser.find_elements(By.XPATH, '//div[contains(@id, "content-grid-widget-v1.0")]')
+            text = ""
+            for counter, i in enumerate(starred_attributes):
+                if i.text == "":
+                    continue
+                else:
+                    text = i.text
+
+            attributes = text.split("\n")
+            for i in range(0, len(attributes), 2):
+                if i < 2:
+                    continue
+                elif len(attributes_dict) == 6:
+                    break
+                else:
+                    attributes_dict[attributes[i]] = attributes[i+1]
+        except:
+            print("Couldn't get starred attributes")
+            
+
+        new_merchant = Merchant(merchant_name, 0, 0, reviews_link, 0, attributes_dict)
         amazon_merchant_list.append(new_merchant)
 
     for i, item in enumerate(amazon_product_list):
-        product_obj = Product(item.name, item.price, item.link, item.image, item.rating, item.rating_count, amazon_merchant_list[i].name, amazon_merchant_list[i].rating, item.website, amazon_merchant_list[i].comments_link, {}, {})
+        product_obj = Product(item.name, item.price, item.link, item.image, item.rating, item.rating_count, amazon_merchant_list[i].name, amazon_merchant_list[i].rating, item.website, amazon_merchant_list[i].comments_link, {}, amazon_merchant_list[i].starred_attributes)
         amazon_temp_list.append(product_obj)
 
 
