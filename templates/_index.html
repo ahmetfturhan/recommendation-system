@@ -206,6 +206,22 @@
           </div>
         </div> 
       </div>
+
+
+      <div class="backside_details">
+        <div class="details-top">
+          <button class="back_btn_details" type="submit"><img src="/static/images/back.png" alt="" style="width: 25px;"></button>
+          <h3 style="margin: auto;">Product Details</h3>
+        </div>
+        <div class="details">
+          {% for key, value in item.starred_attributes.items() %}
+            <p>{{ key }}: {{ value }}</p>
+          {% endfor %}
+        </div>
+      </div>
+
+
+
     </div>
   </div>
   {% endfor %}
@@ -244,6 +260,8 @@
         </div>
       </div>
     </div>
+
+    
     <div class="backside-comments" >
       <div class="comments-top" >
         <button class="back_btn" type="submit"><img src="/static/images/back.png" alt="" style="width: 25px;"></button>
@@ -280,6 +298,22 @@
         </div>
       </div> 
     </div>
+
+
+
+    <div class="backside_details">
+      <div class="details-top">
+        <button class="back_btn_details" type="submit"><img src="/static/images/back.png" alt="" style="width: 25px;"></button>
+        <h3 style="margin: auto;">Product Details</h3>
+      </div>
+      <div class="details">
+        {% for key, value in item.starred_attributes.items() %}
+          <p>{{ key }}: {{ value }}</p>
+        {% endfor %}
+      </div>
+    </div>
+
+
     </div>
   </div>
   {% endfor %}
