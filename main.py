@@ -648,9 +648,35 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
         # Get starred attributes
         attributes_dict = {}
 
+        flag = False
         try:
-            starred_attributes = browser.find_elements(By.XPATH, '//div[contains(@id, "content-grid-widget-v1.0")]')
-            text = ""
+
+            starred_attributes = browser.find_element(By.XPATH, '//table[contains(@id, "productDetails_techSpec_section_1")]')
+            key_attr = starred_attributes.find_elements(By.XPATH, './/th[contains(@class, "prodDetSectionEntry")]')
+            value_attr = starred_attributes.find_elements(By.XPATH, './/td[contains(@class, "prodDetAttrValue")]')
+            flag = True
+            print("Found technical details")
+        except:
+            try:
+                starred_attributes = browser.find_elements(By.XPATH, '//div[contains(@id, "content-grid-widget-v1.0")]')
+                print("Found technical specs")
+            except:
+                print("Couldn't find any technical details")
+
+
+        text = ""
+
+        if flag:
+            for counter, i in enumerate(key_attr):
+                if i.text == "" or counter < 2:
+                    continue
+                elif len(attributes_dict) == 6:
+                    break
+                else:
+                    key = i.text
+                    value = value_attr[counter].text
+                    attributes_dict[key] = value
+        else:
             for counter, i in enumerate(starred_attributes):
                 if i.text == "":
                     continue
@@ -665,8 +691,6 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
                     break
                 else:
                     attributes_dict[attributes[i]] = attributes[i+1]
-        except:
-            print("Couldn't get starred attributes")
             
 
         new_merchant = Merchant(merchant_name, 0, 0, reviews_link, 0, attributes_dict)

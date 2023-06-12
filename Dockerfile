@@ -12,7 +12,6 @@ ENV PYTHONDONTWRITEBYTECODE=1
 RUN apt-get update && apt-get install wget unzip zip -y
 
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-RUN dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
 
 COPY requirements.txt requirements.txt
 
@@ -47,5 +46,5 @@ EXPOSE 5000
 
 # CMD ["/bin/sleep","3600"]
 
-CMD [ "python", "-m" , "flask", "--app", "./app/flaskui", "run", "--host=0.0.0.0"]
+CMD [ "python", "./flaskui.py"]
 

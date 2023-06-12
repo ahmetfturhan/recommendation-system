@@ -136,3 +136,6 @@ def order():
 
 
     return render_template('_index.html', matched=matched, not_matched_amazon=not_matched_amazon, not_matched_trendyol=not_matched_trendyol, labels=labels)
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
