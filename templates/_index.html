@@ -29,16 +29,23 @@
           
               <div class="frontside">
                 <div class="image_and_info">
+                  <div style="display: flex;flex-direction:column;align-items: center;">
                   {% if item.website == "Amazon" %}
                     <img class="product_image_amazon"  src="{{ item["image"] }}" alt="...">
+                  
                   {% else %}
                   <img class="product_image_trendyol"  src="{{ item["image"] }}" alt="...">
+                    
                   {% endif %}
+                </div>
                   <div class="product_info" style="font-size: 16px;">
                     <p class="card-title" style="font-size: 17px;margin-bottom: 1rem;">{{ item["name"] }}</p>
                     <p class="card-text" style="margin-bottom: 1rem;margin-left: -4px;"><img class="price" src="/static/images/price.png" alt=""> Price: {{ item["price"] }} TL</p>
                     <button class="comment-btn" style="margin-bottom: 1rem;margin-left: -11px;border: none;background: none;"><p class="card-text"><img class="rate" src="/static/images/rate.png" alt=""> Rating: {{ item["rating"] }} ({{ item["rating_count"] }})</p></button>
                     <p class="card-text" style="margin-bottom: 1rem;margin-left: -5px;"><img class="shipped" src="/static/images/shipped.png" alt=""> Seller: {{ item["merchant_name"] }} ({{ item["merchant_rating"] }})</p>
+                    {% if item.starred_attributes|length > 0 %}
+                    <button class="details_btn" style=" margin-bottom: 1rem;margin-left: -11px;border: none;background: none;"><p class="card-text"> More details <img class="rate" src="/static/images/more.png" alt=""></p></button>
+                    {% endif %}
                     {% if item.website == "Amazon" %}
                       <div>
                         <form action="{{ item["link"] }}" target="_blank" method="get" rel="noopener noreferrer">
@@ -61,14 +68,20 @@
                   <button class="back_btn" type="submit"><img src="/static/images/back.png" alt="" style="width: 25px;"></button>
                   <h3 style="margin: auto;">Comments</h3>
                 </div>
+                {% if item.comments|length > 0 %}
                 <p class="posNegRatio">{{ item["comments"]["positive_percentage"] }}% of the comments were positive about this product!</p>
+                {% else %}
+                <p class="posNegRatio"> There is no comments about this product!</p>
+                {% endif %}
                 <div class="comments">
+                  
+                  
                   <div class="most-pos-comm">
                     <p style="align-self: flex-start;margin-top: 35px;font-weight: bold;margin-left: 12px;">Positive Comment</p>
                     <div class="img-and-comm"> 
                       <img  class="user-img" src="/static/images/user.png" alt="">
                       <p style="margin-top: 10px;">
-                        {% if item["comments"]["most_positive_comment"]  == "" %}
+                        {% if item["comments"]["most_positive_comment"]  == {} %}
                           <p>There is no positive comment for this product!</p>
                         {% else %}
                         {{ item["comments"]["most_positive_comment"] }}
@@ -82,8 +95,8 @@
                     <div class="img-and-comm"> 
                       <img  class="user-img" src="/static/images/user.png" alt="">
                       <p style="margin-top: 10px;">
-                        {% if item["comments"]["most_negative_comment"]  == "" %}
-                          <p>There is no negative comment for this product!</p>
+                        {% if item["comments"]["most_negative_comment"]  == {} %}
+                          <p>There no negative comment for this product!</p>
                         {% else %}
                         {{ item["comments"]["most_negative_comment"] }}
                       {% endif %}
@@ -94,10 +107,22 @@
                 </div> 
               </div>
 
-              <div class="more_details">
 
+
+              <div class="backside_details">
+                <div class="details-top">
+                  <button class="back_btn_details" type="submit"><img src="/static/images/back.png" alt="" style="width: 25px;"></button>
+                  <h3 style="margin: auto;">Product Details</h3>
+                </div>
+                <div class="comments">
+                  {% for key, value in item.starred_attributes.items() %}
+                    <p>{{ key }}: {{ value }}</p>
+                  {% endfor %}
+                </div>
               </div>
               
+
+
             </div>
           </div>
         {% endfor %}

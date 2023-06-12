@@ -79,5 +79,12 @@
         height: 100px !important;
         zoom: 2 !important;
   }
+  .card_container{
+    padding: 2px !important;
+  }
+
+  .card_box{
+    margin-right: 15px !important;
+  }
 
 } 
