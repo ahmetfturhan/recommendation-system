@@ -71,7 +71,7 @@
                 {% if item.comments|length > 0 %}
                 <p class="posNegRatio">{{ item["comments"]["positive_percentage"] }}% of the comments were positive about this product!</p>
                 {% else %}
-                <p class="posNegRatio"> There is no comments about this product!</p>
+                <p class="posNegRatio"> There are no comments about this product!</p>
                 {% endif %}
                 <div class="comments">
                   
@@ -81,7 +81,7 @@
                     <div class="img-and-comm"> 
                       <img  class="user-img" src="/static/images/user.png" alt="">
                       <p style="margin-top: 10px;">
-                        {% if item["comments"]["most_positive_comment"]  == {} %}
+                        {% if item["comments"]["most_positive_comment"]|length  == 0 %}
                           <p>There is no positive comment for this product!</p>
                         {% else %}
                         {{ item["comments"]["most_positive_comment"] }}
@@ -95,7 +95,7 @@
                     <div class="img-and-comm"> 
                       <img  class="user-img" src="/static/images/user.png" alt="">
                       <p style="margin-top: 10px;">
-                        {% if item["comments"]["most_negative_comment"]  == {} %}
+                        {% if item["comments"]["most_negative_comment"]|length  == 0 %}
                           <p>There no negative comment for this product!</p>
                         {% else %}
                         {{ item["comments"]["most_negative_comment"] }}
@@ -114,7 +114,7 @@
                   <button class="back_btn_details" type="submit"><img src="/static/images/back.png" alt="" style="width: 25px;"></button>
                   <h3 style="margin: auto;">Product Details</h3>
                 </div>
-                <div class="comments">
+                <div class="details">
                   {% for key, value in item.starred_attributes.items() %}
                     <p>{{ key }}: {{ value }}</p>
                   {% endfor %}
@@ -171,18 +171,22 @@
           <button class="back_btn" type="submit"><img src="/static/images/back.png" alt="" style="width: 25px;"></button>
           <h3 style="margin: auto;">Comments</h3>
         </div>
-        <p class="pos&negRatio">{{ item["positive_percentage"] }}% of the comments were positive about this product!</p>
-        <div class="comments">
+        {% if item.comments|length > 0 %}
+          <p class="posNegRatio">{{ item["comments"]["positive_percentage"] }}% of the comments were positive about this product!</p>
+          {% else %}
+          <p class="posNegRatio"> There are no comments about this product!</p>
+          {% endif %}
+          <div class="comments">
           <div class="most-pos-comm">
             <p style="align-self: flex-start;margin-top: 35px;font-weight: bold;margin-left: 12px;">Positive Comment</p>
             <div class="img-and-comm"> 
               <img  class="user-img" src="/static/images/user.png" alt="">
               <p style="margin-top: 10px;">
-                {% if item["comments"]["most_positive_comment"]  == "" %}
-                <p>There is no positive comment for this product!</p>
-              {% else %}
-              {{ item["comments"]["most_positive_comment"] }}
-            {% endif %}
+                {% if item["comments"]["most_positive_comment"]|length  == 0 %}
+                  <p>There is no positive comment for this product!</p>
+                {% else %}
+                {{ item["comments"]["most_positive_comment"] }}
+              {% endif %}
               </p>
            </div> 
           </div>
@@ -191,13 +195,13 @@
             <div class="img-and-comm"> 
               <img  class="user-img" src="/static/images/user.png" alt="">
               <p style="margin-top: 10px;">
-                {% if item["comments"]["most_negative_comment"]  == "" %}
-                  <p>There is no negative comment for this product!</p>
+                {% if item["comments"]["most_negative_comment"]|length  == 0 %}
+                  <p>There no negative comment for this product!</p>
                 {% else %}
                 {{ item["comments"]["most_negative_comment"] }}
               {% endif %}
                 
-              </p>           
+              </p>    
              </div> 
           </div>
         </div> 
@@ -252,25 +256,27 @@
           <div class="img-and-comm"> 
             <img  class="user-img" src="/static/images/user.png" alt="">
             <p style="margin-top: 10px;">
-              {% if item["comments"]["most_positive_comment"]  == "" %}
-              <p>There is no positive comment for this product!</p>
-            {% else %}
-            {{ item["comments"]["most_positive_comment"] }}
-          {% endif %}
-            </p>          </div> 
+              {% if item["comments"]["most_positive_comment"]|length  == 0 %}
+                <p>There is no positive comment for this product!</p>
+              {% else %}
+              {{ item["comments"]["most_positive_comment"] }}
+            {% endif %}
+            </p>
+         </div> 
         </div>
         <div class="most-pos-comm">
           <p style="align-self: flex-start;margin-top: 35px;font-weight: bold;margin-left: 12px;">Negative Comment</p>
           <div class="img-and-comm"> 
             <img  class="user-img" src="/static/images/user.png" alt="">
             <p style="margin-top: 10px;">
-              {% if item["comments"]["most_negative_comment"]  == "" %}
-                <p>There is no negative comment for this product!</p>
+              {% if item["comments"]["most_negative_comment"]|length  == 0 %}
+                <p>There no negative comment for this product!</p>
               {% else %}
               {{ item["comments"]["most_negative_comment"] }}
             {% endif %}
               
-            </p>           </div> 
+            </p>           
+          </div> 
         </div>
       </div> 
     </div>
