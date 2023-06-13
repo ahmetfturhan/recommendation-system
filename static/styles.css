@@ -517,11 +517,12 @@ h2 {
 
 
 
-.details-btn{
+.details_btn{
   position: relative;
   z-index: 20;
   pointer-events: auto;
   cursor: pointer;
+  margin-left: 2px;
 }
 
 
@@ -549,3 +550,7 @@ h2 {
   margin-left: 5px;
 }
 
+.details-top{
+  display: flex;
+  justify-content: space-evenly;
+}
