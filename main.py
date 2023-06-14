@@ -182,7 +182,7 @@ def remove_items(test_list, item):
     return res
 
 def trendyol(trend_product_list_main, brand, search_query, classifier):
-    product_number = 2
+    product_number = 8
     print("Starting Trendyol")
     start = time.time()
     
@@ -528,7 +528,7 @@ def trendyol(trend_product_list_main, brand, search_query, classifier):
     
 
 def amazon(amazon_product_list_main, brand, search_query, classifier):
-    product_number = 2
+    product_number = 8
     print("Starting Amazon")
     start = time.time()
 

@@ -47,6 +47,6 @@ EXPOSE 5000
 # CMD ["/bin/sleep","3600"]
 
 # CMD [ "python", "./flaskui.py"]
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 flaskui:app
+CMD exec gunicorn --bind :8080 --workers 1 --threads 8 --timeout 0 flaskui:app
 
 
