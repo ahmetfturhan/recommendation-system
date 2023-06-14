@@ -79,7 +79,7 @@
                   <div class="most-pos-comm">
                     <p style="align-self: flex-start;margin-top: 35px;font-weight: bold;margin-left: 12px;">Positive Comment</p>
                     <div class="img-and-comm"> 
-                      <img  class="user-img" src="/static/images/user.png" alt="">
+                      <img  class="user-img" src="/static/images/user-green.png" alt="">
                       <p style="margin-top: 10px;">
                         {% if item["comments"]["most_positive_comment"]|length  == 0 %}
                           <p>There is no positive comment for this product!</p>
@@ -93,7 +93,7 @@
                   <div class="most-pos-comm">
                     <p style="align-self: flex-start;margin-top: 35px;font-weight: bold;margin-left: 12px;">Negative Comment</p>
                     <div class="img-and-comm"> 
-                      <img  class="user-img" src="/static/images/user.png" alt="">
+                      <img  class="user-img" src="/static/images/user-red.png" alt="">
                       <p style="margin-top: 10px;">
                         {% if item["comments"]["most_negative_comment"]|length  == 0 %}
                           <p>There no negative comment for this product!</p>
@@ -116,7 +116,7 @@
                 </div>
                 <div class="details">
                   {% for key, value in item.starred_attributes.items() %}
-                    <p>{{ key }}: {{ value }}</p>
+                    <p style="font-weight: bold;">{{ key }}:</p> <p>{{ value }}</p> 
                   {% endfor %}
                 </div>
               </div>
@@ -183,7 +183,7 @@
           <div class="most-pos-comm">
             <p style="align-self: flex-start;margin-top: 35px;font-weight: bold;margin-left: 12px;">Positive Comment</p>
             <div class="img-and-comm"> 
-              <img  class="user-img" src="/static/images/user.png" alt="">
+              <img  class="user-img" src="/static/images/user-green.png" alt="">
               <p style="margin-top: 10px;">
                 {% if item["comments"]["most_positive_comment"]|length  == 0 %}
                   <p>There is no positive comment for this product!</p>
@@ -196,7 +196,7 @@
           <div class="most-pos-comm">
             <p style="align-self: flex-start;margin-top: 35px;font-weight: bold;margin-left: 12px;">Negative Comment</p>
             <div class="img-and-comm"> 
-              <img  class="user-img" src="/static/images/user.png" alt="">
+              <img  class="user-img" src="/static/images/user-red.png" alt="">
               <p style="margin-top: 10px;">
                 {% if item["comments"]["most_negative_comment"]|length  == 0 %}
                   <p>There no negative comment for this product!</p>
@@ -218,7 +218,7 @@
         </div>
         <div class="details">
           {% for key, value in item.starred_attributes.items() %}
-            <p>{{ key }}: {{ value }}</p>
+            <p style="font-weight: bold;">{{ key }}:</p> <p>{{ value }}</p> 
           {% endfor %}
         </div>
       </div>
@@ -278,7 +278,7 @@
         <div class="most-pos-comm">
           <p style="align-self: flex-start;margin-top: 35px;font-weight: bold;margin-left: 12px;">Positive Comment</p>
           <div class="img-and-comm"> 
-            <img  class="user-img" src="/static/images/user.png" alt="">
+            <img  class="user-img" src="/static/images/user-green.png" alt="">
             <p style="margin-top: 10px;">
               {% if item["comments"]["most_positive_comment"]|length  == 0 %}
                 <p>There is no positive comment for this product!</p>
@@ -291,7 +291,7 @@
         <div class="most-pos-comm">
           <p style="align-self: flex-start;margin-top: 35px;font-weight: bold;margin-left: 12px;">Negative Comment</p>
           <div class="img-and-comm"> 
-            <img  class="user-img" src="/static/images/user.png" alt="">
+            <img  class="user-img" src="/static/images/user-red.png" alt="">
             <p style="margin-top: 10px;">
               {% if item["comments"]["most_negative_comment"]|length  == 0 %}
                 <p>There no negative comment for this product!</p>
@@ -314,7 +314,7 @@
       </div>
       <div class="details">
         {% for key, value in item.starred_attributes.items() %}
-          <p>{{ key }}: {{ value }}</p>
+          <p style="font-weight: bold;">{{ key }}:</p> <p>{{ value }}</p> 
         {% endfor %}
       </div>
     </div>
