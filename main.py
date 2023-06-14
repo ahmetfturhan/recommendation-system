@@ -553,27 +553,33 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
     browser.get('https://www.amazon.com.tr/s?k=' + brand + " " + search_query)
     delay = 5
 
-    WebDriverWait(browser, delay).until(EC.element_to_be_clickable(("xpath", '//*[@id="sp-cc-accept"]')))
+    try:
+        WebDriverWait(browser, delay).until(EC.element_to_be_clickable(("xpath", '//*[@id="sp-cc-accept"]')))
 
-    # WebDriverWait(browser, delay).until(EC.presence_of_element_located(("xpath", '//*[@id="sp-cc-accept"]')))
+        # WebDriverWait(browser, delay).until(EC.presence_of_element_located(("xpath", '//*[@id="sp-cc-accept"]')))
 
-    # Click on the cookies button
-    browser.find_element("xpath", '//*[@id="sp-cc-accept"]').click()
+        # Click on the cookies button
+        browser.find_element("xpath", '//*[@id="sp-cc-accept"]').click()
 
-    logging.info("Amazon Cookies Accepted")
+        logging.info("Amazon Cookies Accepted")
+    except TimeoutException:
+        print("Amazon Cookies Already Accepted?")
 
     # browser.implicitly_wait(2)
-    WebDriverWait(browser, delay).until(EC.presence_of_element_located(("xpath", '//*[@id="brandsRefinements"]')))
+    try:
+        WebDriverWait(browser, delay).until(EC.presence_of_element_located(("xpath", '//*[@id="brandsRefinements"]')))
 
-    amazon_brand_filters = browser.find_element(By.ID, 'brandsRefinements').find_element(By.CLASS_NAME, 'a-unordered-list').get_property('children')
+        amazon_brand_filters = browser.find_element(By.ID, 'brandsRefinements').find_element(By.CLASS_NAME, 'a-unordered-list').get_property('children')
     
-    #Select the brand
-    for i in amazon_brand_filters:
-        brand_name = i.find_element(By.CLASS_NAME, 'a-list-item').find_element(By.CLASS_NAME, 'a-link-normal').find_element(By.CLASS_NAME, 'a-size-base').text
-        logging.debug("brands %s", brand_name)
-        if i.text.lower() == brand.lower():
-            i.find_element(By.CLASS_NAME, 'a-list-item').find_element(By.CLASS_NAME, 'a-link-normal').click()
-            break
+        #Select the brand
+        for i in amazon_brand_filters:
+            brand_name = i.find_element(By.CLASS_NAME, 'a-list-item').find_element(By.CLASS_NAME, 'a-link-normal').find_element(By.CLASS_NAME, 'a-size-base').text
+            logging.debug("brands %s", brand_name)
+            if i.text.lower() == brand.lower():
+                i.find_element(By.CLASS_NAME, 'a-list-item').find_element(By.CLASS_NAME, 'a-link-normal').click()
+                break
+    except Exception as e:
+        print("Couldn't select the brand", e)
     
    
     product_link = []
