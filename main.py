@@ -550,7 +550,7 @@ def amazon(amazon_product_list_main, brand, search_query, classifier):
     browser.maximize_window()
 
 
-    browser.get('https://www.amazon.com.tr/s?k=' + brand + " " + search_query)
+    browser.get('https://www.amazon.com.tr/s?k=' + brand + "+" + search_query+"&ref=nav_bb_sb")
     delay = 5
 
     try:
